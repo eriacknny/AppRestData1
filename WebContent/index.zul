@@ -1,0 +1,48 @@
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" ?>
+<?link rel="stylesheet" type="text/css" href="/style.css"?>
+<zk>
+	<borderlayout hflex="1" vflex="1">
+		<north height="120px" border="none">
+			<include src="banner.zul"></include>
+		</north>
+		<west width="200px" border="none" collapsible="true"
+			splittable="true" minsize="300" sclass="west">
+			
+			<grid hflex="1" vflex="1" sclass="sidebar-fn">
+			<zscript><![CDATA[ String link1= "dataRandom.zul"; String link2="restClient.zul"; String link3="convertFile.zul"
+    		]]>
+			</zscript>
+				<columns style="color:#FFFFFF">
+					<column width="36px" />
+					<column />
+				</columns>
+				<rows>
+					<row style="background-color: #6DB33F" onClick="inc_center.src=link1" >
+						<image src="/imgs/data.png" />
+						<label value="Data Random"
+							style="font-weight: bold; color:#FFFFFF">
+						</label>
+					</row>
+					<row style="background-color: #6DB33F" onClick="inc_center.src=link2" >
+						<image src="/imgs/rest.png" />
+						<label value="Rest Client"
+							style="font-weight: bold; color:#FFFFFF">
+						</label>
+					</row>
+					<row  style="background-color: #6DB33F" onClick="inc_center.src=link3">
+						<image src="/imgs/data.png" />
+						<label value="Convert File"
+							style="font-weight: bold; color:#FFFFFF">
+						</label>
+					</row>
+				</rows>
+			</grid>
+		</west>
+		<center id="mainContent" autoscroll="true">
+			<include id="inc_center" src="" />
+		</center>
+		<south height="50px" border="none">
+			<include src="footer.zul"></include>
+		</south>
+	</borderlayout>
+</zk>

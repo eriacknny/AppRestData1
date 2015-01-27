@@ -1,0 +1,39 @@
+<?link rel="stylesheet" type="text/css" href="/style.css"?>
+<zk>
+	<window border="normal" height="100%" zclass="z-window-popup"
+		apply="AppConvertFile.AppConvertFileController">
+		<groupbox mold="3d">
+			<caption label="Convert File to Base64"></caption>
+			<listbox>
+				<listitem>
+					<listcell>
+						<button id="btn" label="Select File" upload="true,maxsize=1,multiple=true" >
+						</button>
+					
+					</listcell>
+					<listcell>
+						<button id="buttonUpload" label="Upload">
+						</button>
+					</listcell>
+				</listitem>
+
+			</listbox>
+			<separator></separator>
+			<listbox>
+				<listitem>
+					<listcell>
+						<label value="Result:"></label>
+					</listcell>
+				</listitem>
+				<listitem>
+					<listcell>
+						<textbox id="txtResult" width="100%"
+							height="300px">
+						</textbox>
+					</listcell>
+				</listitem>
+			</listbox>
+		</groupbox>
+
+	</window>
+</zk>

@@ -1,0 +1,109 @@
+<?link rel="stylesheet" type="text/css" href="/style.css"?>
+<zk>
+	<window border="normal" height="100%" zclass="z-window-popup"
+		apply="AppRestData.AppRestDataController">
+		<groupbox mold="3d">
+			<caption label="Set Data"></caption>
+			<listbox id="setData" rows="4">
+				<listhead>
+					<listheader label="Field Name" />
+					<listheader label="Data Type" />
+					<listheader label="Value" />
+					<listheader label="Length" />
+					<listheader label="Required" />
+				</listhead>
+			</listbox>
+		</groupbox>
+		<groupbox mold="3d">
+			<listbox>
+				<listitem>
+					<listcell>
+						<label value="Field Name:"></label>
+						<textbox id="textFieldName" width="120px"></textbox>
+
+					</listcell>
+					<listcell>
+						<label value="Data Type:"></label>
+						<combobox id="comboType" width="120px" readonly = "true"  >
+							<comboitem label="FirstName" id="comboFirstName"></comboitem>
+							<comboitem label="LastName" id="comboLastName"></comboitem>
+							<comboitem label="Email" id="comboEmail"></comboitem>
+							<comboitem label="BirthData" id="comboBirthData"></comboitem>
+							<comboitem label="Address" id="comboAddress"></comboitem>
+							<comboitem label="City" id="comboCity"></comboitem>
+							<comboitem label="RandomText" id="comboRandomText"></comboitem>
+							<comboitem label="RandomChars" id="comboRandomChars"></comboitem>
+							<comboitem label="RandomWord" id="comboRandomWord"></comboitem>
+							<comboitem label="Alphanumeric" id="comboAlphanumeric"></comboitem>
+							<comboitem label="Numeric" id="comboNumeric"></comboitem>							
+						</combobox>
+					</listcell>
+					<listcell>
+						<label value="Value:"></label>
+						<textbox id="textValue" width="120px"></textbox>
+					</listcell>
+					<listcell>
+						<label value="Length:"></label>
+						<textbox id="textLength" width="120px"></textbox>
+					</listcell>
+					<listcell>
+						<label value="Required"></label>
+						<checkbox id="checkRequired"></checkbox>
+					</listcell>
+				</listitem>
+			</listbox>
+			<button id="add_item" label="Add Item" />
+			<button id="detete_item" label="Delete Item" />
+		</groupbox>
+		<separator />
+		<separator />
+		<groupbox mold="3d">
+			<caption label="Export Type"></caption>
+			<tabbox id="tb" height="100px">
+				<tabs id="tabs">
+					<tab id="tab_csv" label="CSV" />
+					<tab id="tab_exel" label="EXCEL" />
+					<tab id="tab_json" label="JSON" />
+					<tab id="tab_xml" label="XML" />
+
+				</tabs>
+				<tabpanels>
+					<tabpanel>
+						<listbox>
+							<listitem checkable="false">
+								<listcell>
+									<label value="Delimiter Char(s):" />
+									<textbox id="text_delimiter">
+									</textbox>
+								</listcell>
+								<listcell>
+									<label value="Path:" />
+									<textbox id="text_path"
+										width="400px">
+									</textbox>
+								</listcell>
+							</listitem>
+						</listbox>
+					</tabpanel>
+					<tabpanel></tabpanel>
+				</tabpanels>
+			</tabbox>
+		</groupbox>
+		<separator />
+		<separator />
+		<groupbox mold="3d">
+			<caption label="Rows"></caption>
+			<listbox>
+				<listitem>
+					<listcell>
+						<label value="Rows:"></label>
+						<textbox id="text_row"></textbox>
+						<button id="button_generate" label="Generate">
+						</button>
+					</listcell>
+				</listitem>
+			</listbox>
+		</groupbox>
+
+	</window>
+</zk>
