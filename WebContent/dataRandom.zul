@@ -19,32 +19,71 @@
 				<listitem>
 					<listcell>
 						<label value="Field Name:"></label>
-						<textbox id="textFieldName" width="120px"></textbox>
-
+						<textbox id="textFieldName" width="100px"></textbox>
 					</listcell>
 					<listcell>
 						<label value="Data Type:"></label>
-						<combobox id="comboType" width="120px" readonly = "true"  >
-							<comboitem label="FirstName" id="comboFirstName"></comboitem>
-							<comboitem label="LastName" id="comboLastName"></comboitem>
+						<combobox id="comboType" width="120px"
+							readonly="true">
+							<comboitem label="FirstName"
+								id="comboFirstName">
+							</comboitem>
+							<comboitem label="LastName"
+								id="comboLastName">
+							</comboitem>
 							<comboitem label="Email" id="comboEmail"></comboitem>
-							<comboitem label="BirthData" id="comboBirthData"></comboitem>
-							<comboitem label="Address" id="comboAddress"></comboitem>
+							<comboitem label="BirthData"
+								id="comboBirthData">
+							</comboitem>
+							<comboitem label="Address"
+								id="comboAddress">
+							</comboitem>
 							<comboitem label="City" id="comboCity"></comboitem>
-							<comboitem label="RandomText" id="comboRandomText"></comboitem>
-							<comboitem label="RandomChars" id="comboRandomChars"></comboitem>
-							<comboitem label="RandomWord" id="comboRandomWord"></comboitem>
-							<comboitem label="Alphanumeric" id="comboAlphanumeric"></comboitem>
-							<comboitem label="Numeric" id="comboNumeric"></comboitem>							
+							<comboitem label="RandomText"
+								id="comboRandomText">
+							</comboitem>
+							<comboitem label="RandomChars"
+								id="comboRandomChars">
+							</comboitem>
+							<comboitem label="RandomWord"
+								id="comboRandomWord">
+							</comboitem>
+							<comboitem label="Alphanumeric"
+								id="comboAlphanumeric">
+							</comboitem>
+							<comboitem label="Numeric"
+								id="comboNumeric">
+							</comboitem>
+							<comboitem label="Fecha DD/MM/YYYY"
+								id="fechaFormat1">
+							</comboitem>
+							<comboitem label="Fecha DD-MM-YYYY"
+								id="fechaFormat5">
+							</comboitem>
+							<comboitem label="Fecha MM/DD/YYYY"
+								id="fechaFormat2">
+							</comboitem>
+							<comboitem label="Fecha MM-DD-YYYY"
+								id="fechaFormat4">
+							</comboitem>
+							<comboitem label="Fecha YYYY/MM/DD"
+								id="fechaFormat3">
+							</comboitem>
+							<comboitem label="Fecha YYYY-MM-DD"
+								id="fechaFormat6">
+							</comboitem>
 						</combobox>
 					</listcell>
 					<listcell>
 						<label value="Value:"></label>
-						<textbox id="textValue" width="120px"></textbox>
+						<textbox id="textValue" width="100px"></textbox>
+					</listcell>
+					<listcell>
+						<datebox id="dateBox" timeZonesReadonly="false"></datebox>
 					</listcell>
 					<listcell>
 						<label value="Length:"></label>
-						<textbox id="textLength" width="120px"></textbox>
+						<textbox id="textLength" width="100px"></textbox>
 					</listcell>
 					<listcell>
 						<label value="Required"></label>

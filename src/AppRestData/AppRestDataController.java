@@ -2,7 +2,10 @@ package AppRestData;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -17,6 +20,8 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listhead;
@@ -52,39 +57,79 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	private Textbox textLength;
 	@Wire
 	private Checkbox checkRequired;
-	
-	
-	
+	@Wire
+	private Datebox dateBox;
 
-
-	//Metodo para bloquear el campo longitud que el caso de que el tipo de valor no amerite longitud
+	// Metodo para bloquear el campo longitud que el caso de que el tipo de
+	// valor no amerite longitud
 	@Listen("onSelect = #comboType")
-	public void selectCamposSinLongitud(){
-		if((comboType.getValue().equals("FirstName"))|| (comboType.getValue().equals("LastName"))
-				||(comboType.getValue().equals("Email"))||(comboType.getValue().equals("BirthData"))
-				||(comboType.getValue().equals("Address"))||(comboType.getValue().equals("City"))){
-		
+	public void selectCamposSinLongitud() {
+		if ((comboType.getValue().equals("FirstName"))
+				|| (comboType.getValue().equals("LastName"))
+				|| (comboType.getValue().equals("Email"))
+				|| (comboType.getValue().equals("BirthData"))
+				|| (comboType.getValue().equals("Address"))
+				|| (comboType.getValue().equals("City"))) {
+
 			textLength.setValue("null");
 			textLength.setDisabled(true);
-			
+
 		}
-		
-		else{
+
+		else {
 			textLength.setValue("");
 			textLength.setDisabled(false);
 		}
-	
+
+		if (comboType.getValue().equals("Fecha DD/MM/YYYY")
+				|| comboType.getValue().equals("Fecha DD-MM-YYYY")
+				|| comboType.getValue().equals("Fecha MM/DD/YYYY")
+				|| comboType.getValue().equals("Fecha MM-DD-YYYY")
+				|| comboType.getValue().equals("Fecha YYYY/MM/DD")
+				|| comboType.getValue().equals("Fecha YYYY-MM-DD")) {
+			textValue.setDisabled(true);
+			textLength.setDisabled(true);
+
+
+			if (comboType.getValue().equals("Fecha MM/DD/YYYY"))
+				dateBox.setFormat("MM/dd/yyyy");
+			if (comboType.getValue().equals("Fecha MM-DD-YYYY"))
+				dateBox.setFormat("MM-dd-yyyy");
+			if (comboType.getValue().equals("Fecha YYYY/MM/DD"))
+				dateBox.setFormat("yyyy/MM/dd");
+			if (comboType.getValue().equals("Fecha YYYY-MM-DD"))
+				dateBox.setFormat("yyyy-MM-dd");
+			if (comboType.getValue().equals("Fecha DD/MM/YYYY"))
+				dateBox.setFormat("dd/MM/yyyy");
+			if (comboType.getValue().equals("Fecha DD-MM-YYYY"))
+				dateBox.setFormat("dd/MM/yyyy");
+
+		} else {
+			textValue.setDisabled(false);
+		}
+
 	}
-	
-	
-	//Metodo para agragar una fila a la tabla
+
+	// Metodo para agragar una fila a la tabla
 	@Listen("onClick = #add_item")
 	public void addItem() {
-
+		System.out.println("format:" + dateBox.getRealFormat());
+		Date fecha = dateBox.getValue();
+		DateFormat dateFormat = new SimpleDateFormat(dateBox.getFormat());
+		String valorFecha = "";
 		Listitem item = new Listitem();
 		Listcell cellname = new Listcell(textFieldName.getValue());
 		Listcell celltype = new Listcell(comboType.getValue());
-		Listcell cellvalue = new Listcell(textValue.getValue());
+		Listcell cellvalue = null;
+		if (textValue.getValue().equals("")) {
+			valorFecha = dateFormat.format(fecha);
+			System.out.println(valorFecha);
+			cellvalue = new Listcell(valorFecha);
+		}
+
+		else
+			cellvalue = new Listcell(textValue.getValue());
+
 		Listcell celllegth = new Listcell(textLength.getValue());
 		boolean required = checkRequired.isChecked();
 		String strRequired = Boolean.toString(required);
@@ -98,9 +143,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		setData.appendChild(item);
 		setData.setSelectedItem(item);
 	}
-	
-	
-	//Metodo para eliminar una fila
+
+	// Metodo para eliminar una fila
 	@Listen("onClick = #detete_item")
 	public void deleteItem() {
 		int index = setData.getSelectedIndex();
@@ -112,11 +156,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 			alert("Please select an item first!");
 		}
 	}
-	
-	
 
-	
-	//Método para generar los casos de prueba
+	// Método para generar los casos de prueba
 	@Listen("onClick = #button_generate")
 	public void Generate() {
 		ArrayList<String> listString = new ArrayList<>();
@@ -127,73 +168,76 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		List<Listitem> lista = setData.getItems();
 		DataFactory df = new DataFactory();
 		RandomStringUtils rsu = new RandomStringUtils();
-		
-		
-		
-		ordenarParametros(listString,lista,listValuesValidate,listLength,listRequired);		
+
+		ordenarParametros(listString, lista, listValuesValidate, listLength,
+				listRequired);
 		int lineas = Integer.parseInt(text_row.getValue());
-		int lineas_min = (3+listString.size());
+		int lineas_min = (3 + listString.size());
 		System.out.println("lineas: " + lineas);
 		System.out.println("lineas_min: " + lineas_min);
-		if(lineas<lineas_min){
+		if (lineas < lineas_min) {
 			Messagebox mensaje = new Messagebox();
-			mensaje.show("Are you sure?", "Question", Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION, new EventListener<Event>() {
-				@Override
-				public void onEvent(Event event) throws Exception {
-					if("onCancel".equals(event.getName())){
-						text_row.setValue("");
-					}
-					else{
-						ArrayList<String> listString = new ArrayList<>();
-						ArrayList<String> listValuesValidate = new ArrayList<>();
-						ArrayList<String> listValuesText = new ArrayList<>();
-						ArrayList<Integer> listLength = new ArrayList();
-						ArrayList<Boolean> listRequired = new ArrayList<>();
-						List<Listitem> lista = setData.getItems();
-						int lineas = Integer.parseInt(text_row.getValue());
-						ordenarParametros(listString,lista,listValuesValidate,listLength,listRequired);	
-						int row = setData.getItemCount();
+			mensaje.show("Are you sure?", "Question", Messagebox.OK
+					| Messagebox.CANCEL, Messagebox.QUESTION,
+					new EventListener<Event>() {
+						@Override
+						public void onEvent(Event event) throws Exception {
+							if ("onCancel".equals(event.getName())) {
+								text_row.setValue("");
+							} else {
+								ArrayList<String> listString = new ArrayList<>();
+								ArrayList<String> listValuesValidate = new ArrayList<>();
+								ArrayList<String> listValuesText = new ArrayList<>();
+								ArrayList<Integer> listLength = new ArrayList();
+								ArrayList<Boolean> listRequired = new ArrayList<>();
+								List<Listitem> lista = setData.getItems();
+								int lineas = Integer.parseInt(text_row
+										.getValue());
+								ordenarParametros(listString, lista,
+										listValuesValidate, listLength,
+										listRequired);
+								int row = setData.getItemCount();
 								TestCase caso = new TestCase();
-								ArrayList<String> listCaso = caso.casosOpciones(listString, listLength, listValuesValidate, listRequired);
-								for(int d =0; d<listCaso.size();++d){
+								ArrayList<String> listCaso = caso
+										.casosOpciones(listString, listLength,
+												listValuesValidate,
+												listRequired);
+								for (int d = 0; d < listCaso.size(); ++d) {
 									listValuesText.add(listCaso.get(d));
 								}
 								System.out.println(listValuesText);
-					
-					}			
-				}
-			});	
-		}	
-		else{
-		    int row = setData.getItemCount();
-		
-			
-				TestCase caso = new TestCase();
-				ArrayList<String> listCaso= caso.tupla(listString, listValuesValidate,listLength);
-				//ArrayList<String> listCaso = caso.casosOpciones(listString, listLength, listValuesValidate, listRequired);
-				System.out.println(listCaso);
-				generateTXT(row,lineas,listCaso);
+
+							}
+						}
+					});
+		} else {
+			int row = setData.getItemCount();
+
+			TestCase caso = new TestCase();
+			ArrayList<String> listCaso = caso.tupla(listString,
+					listValuesValidate, listLength);
+			// ArrayList<String> listCaso = caso.casosOpciones(listString,
+			// listLength, listValuesValidate, listRequired);
+			System.out.println(listCaso);
+			generateTXT(row, lineas, listCaso);
 		}
-		
+
 	}
-	
-	
-	
-	
-		
-	
-	//Método para encontrar el orden de los parametros indicados
-	public void ordenarParametros(ArrayList<String> listString,List<Listitem> lista,ArrayList<String> listValuesValidate,ArrayList<Integer> listLength,ArrayList<Boolean> listRequired){
+
+	// Método para encontrar el orden de los parametros indicados
+	public void ordenarParametros(ArrayList<String> listString,
+			List<Listitem> lista, ArrayList<String> listValuesValidate,
+			ArrayList<Integer> listLength, ArrayList<Boolean> listRequired) {
 		for (Listitem currentList : lista) {
 			List<Component> com = currentList.getChildren();
 
 			for (Component currentComp : com) {
 
 				Listcell lc = (Listcell) currentComp;
-				
+
 				String cadena = "";
 				if (lc.getColumnIndex() == 1) {
-					if (lc.getLabel().equals("FirstName")) {				 
+					if (lc.getLabel().equals("FirstName")) {
 						listString.add("FirstName");
 					}
 					if (lc.getLabel().equals("LastName")) {
@@ -230,57 +274,52 @@ public class AppRestDataController extends SelectorComposer<Component> {
 				if (lc.getColumnIndex() == 2) {
 					listValuesValidate.add(lc.getLabel());
 				}
-				if(lc.getColumnIndex() == 3){
-					if(lc.getLabel().equals("null")){
+				if (lc.getColumnIndex() == 3) {
+					if (lc.getLabel().equals("null")) {
 						listLength.add(null);
-					}
-					else{
-					listLength.add(Integer.parseInt(lc.getLabel()));
+					} else {
+						listLength.add(Integer.parseInt(lc.getLabel()));
 					}
 				}
-				if(lc.getColumnIndex() == 4){
-					listRequired.add(Boolean.parseBoolean(lc.getLabel().toString()));
+				if (lc.getColumnIndex() == 4) {
+					listRequired.add(Boolean.parseBoolean(lc.getLabel()
+							.toString()));
 				}
-				
-				
+
 			}
-		}	
+		}
 	}
-	
-	
-	
-	
-	//Metodo para crear el un archivo TXT
-	public void generateTXT(int row, int lineas, ArrayList<String> listCaso){
+
+	// Metodo para crear el un archivo TXT
+	public void generateTXT(int row, int lineas, ArrayList<String> listCaso) {
 		PrintWriter salida = null;
 		int sizeList = listCaso.size();
 		try {
-			
+
 			salida = new PrintWriter(text_path.getValue());
 			int variable = row;
-			int valorPost=0;
-			for(int i=0; i<lineas; ++i){	
-				for(int a = valorPost; a< variable; ++a){
-					if(a == (variable - 1))
-					{
+			int valorPost = 0;
+			for (int i = 0; i < lineas; ++i) {
+				for (int a = valorPost; a < variable; ++a) {
+					if (a == (variable - 1)) {
 						salida.print(listCaso.get(a).toString());
+					} else {
+						salida.print(listCaso.get(a).toString()
+								+ text_delimiter.getValue());
 					}
-					else{
-						salida.print(listCaso.get(a).toString() + text_delimiter.getValue());
-					}
-					
-					valorPost=a;
+
+					valorPost = a;
 				}
-				valorPost= valorPost +1;
-				variable = variable + row; 
+				valorPost = valorPost + 1;
+				variable = variable + row;
 				salida.println();
 			}
 			salida.flush();
 		} catch (FileNotFoundException e) {
 			System.out.println(e.getMessage());
-		} finally {         
-            salida.close();
-        }
+		} finally {
+			salida.close();
+		}
 	}
 
 }
