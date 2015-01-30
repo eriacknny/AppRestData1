@@ -14,108 +14,6 @@ public class TestCase {
 	DataFactory df = new DataFactory();
 
 	// Para generar casos de prueba por opciones
-	public ArrayList<String> casosOpciones(ArrayList<String> listString,
-			ArrayList<Integer> listLength,
-			ArrayList<String> listValuesValidate,
-			ArrayList<Boolean> listRequired) {
-		ArrayList<String> listCases = new ArrayList<String>();
-
-		ArrayList<String> listOpciones = new ArrayList<>();
-		listOpciones.add("Valido");
-		listOpciones.add("InvalidoVacio");
-		listOpciones.add("InvalidoType");
-		listOpciones.add("InvalidoLength");
-
-		for (int op = 0; op < listOpciones.size(); ++op) {
-			if (listOpciones.get(op).equals("Valido")) {
-				for (int v = 0; v < listValuesValidate.size(); ++v) {
-					if (listRequired.get(v) == false)
-						listCases.add(" ");
-					else
-						listCases.add(listValuesValidate.get(v));
-				}
-			}
-			if (listOpciones.get(op).equals("Valido")) {
-				for (int r = 0; r < listRequired.size(); ++r) {
-					if (listRequired.get(r) == false) {
-						for (int v = 0; v < listValuesValidate.size(); ++v) {
-							if (r == v)
-								listCases.add(listValuesValidate.get(v));
-							else
-								listCases.add(listValuesValidate.get(v));
-
-						}
-					} else {
-						for (int v = 0; v < listValuesValidate.size(); ++v) {
-							if (r == v)
-								listCases.add(" ");
-							else
-								listCases.add(listValuesValidate.get(v));
-
-						}
-					}
-				}
-			}
-			if (listOpciones.get(op).equals("InvalidoType")) {
-				for (int t = 0; t < listString.size(); ++t) {
-					if (listString.get(t) != "Numeric"
-							&& listString.get(t) != "Email") {
-						for (int v = 0; v < listValuesValidate.size(); ++v) {
-							if (t == v)
-								listCases.add("86...*");
-							else
-								listCases.add(listValuesValidate.get(v));
-						}
-					} else {
-						if (listString.get(t).equals("Email")) {
-							for (int v = 0; v < listValuesValidate.size(); ++v) {
-								if (t == v)
-									listCases.add("email.com");
-								else
-									listCases.add(listValuesValidate.get(v));
-							}
-						}
-						if (listString.get(t).equals("Numeric")) {
-							for (int v = 0; v < listValuesValidate.size(); ++v) {
-								if (t == v)
-									listCases.add("abcde");
-								else
-									listCases.add(listValuesValidate.get(v));
-							}
-						}
-					}
-				}
-			}
-			if (listOpciones.get(op).equals("InvalidoLength")) {
-				for (int l = 0; l < listLength.size(); ++l) {
-					if (listLength.get(l) != null) {
-						for (int v = 0; v < listValuesValidate.size(); ++v) {
-							if (l == v)
-								listCases.add(df.getRandomText(listLength
-										.get(l) + 1));
-							else
-								listCases.add(listValuesValidate.get(v));
-						}
-
-					}
-				}
-				for (int l = 0; l < listLength.size(); ++l) {
-					if (listLength.get(l) != null) {
-						for (int v = 0; v < listValuesValidate.size(); ++v) {
-							if (l == v)
-								listCases.add(df.getRandomText(listLength
-										.get(l) - 1));
-							else
-								listCases.add(listValuesValidate.get(v));
-						}
-
-					}
-				}
-
-			}
-		}
-		return listCases;
-	}
 
 	public ArrayList<String> combinaciones(ArrayList<String> listString) {
 		ArrayList<String> listCases = new ArrayList<String>();
@@ -165,7 +63,7 @@ public class TestCase {
 	}
 
 	public ArrayList<String> tupla(ArrayList<String> listString,
-			ArrayList<String> listValuesValidate, ArrayList<Integer> listLength) {
+			ArrayList<String> listValuesValidate, ArrayList<Integer> listLengthMin, ArrayList<Integer> listLengthMax) {
 		ArrayList<String> listTupla = new ArrayList<String>();
 		ArrayList<String> listCombinaciones = combinaciones(listString);
 		String cadena = "";
@@ -178,7 +76,7 @@ public class TestCase {
 					++i;
 				} else {
 					if (listCombinaciones.get(i).equals("I")) {
-						cadena = invalido(listString, listLength, j);
+						cadena = invalido(listString, listLengthMin, j);
 						listTupla.add(cadena);
 						++i;
 					} else {

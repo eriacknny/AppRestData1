@@ -9,7 +9,8 @@
 					<listheader label="Field Name" />
 					<listheader label="Data Type" />
 					<listheader label="Value" />
-					<listheader label="Length" />
+					<listheader label="Length Min" />
+					<listheader label="Length Max"/>
 					<listheader label="Required" />
 				</listhead>
 			</listbox>
@@ -76,14 +77,14 @@
 					</listcell>
 					<listcell>
 						<label value="Value:"></label>
-						<textbox id="textValue" width="100px"></textbox>
+						<textbox id="textValue" width="100px"
+							disabled="true">
+						</textbox>
 					</listcell>
 					<listcell>
-						<datebox id="dateBox" timeZonesReadonly="false"></datebox>
-					</listcell>
-					<listcell>
-						<label value="Length:"></label>
-						<textbox id="textLength" width="100px"></textbox>
+						<datebox id="dateBox" timeZonesReadonly="false"
+							disabled="true">
+						</datebox>
 					</listcell>
 					<listcell>
 						<label value="Required"></label>
@@ -91,6 +92,21 @@
 					</listcell>
 				</listitem>
 			</listbox>
+			<listbox id="listboxLenth" visible="false">
+				<listitem>
+					<listcell>
+						<label value="Length Min:"></label>
+						<intbox id="intboxMin"></intbox>
+					</listcell>
+					<listcell>
+						<label value="Length Max"></label>
+						<intbox id="intboxMax"></intbox>
+					</listcell>
+					<listcell></listcell>
+					<listcell></listcell>
+				</listitem>
+			</listbox>
+
 			<button id="add_item" label="Add Item" />
 			<button id="detete_item" label="Delete Item" />
 		</groupbox>
