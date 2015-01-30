@@ -8,6 +8,8 @@ import javax.management.modelmbean.RequiredModelMBean;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.fluttercode.datafactory.impl.DataFactory;
 
+import com.sun.javafx.scene.control.behavior.ListViewBehavior;
+
 public class TestCase {
 
 	RandomStringUtils rsu = new RandomStringUtils();
@@ -76,7 +78,7 @@ public class TestCase {
 					++i;
 				} else {
 					if (listCombinaciones.get(i).equals("I")) {
-						cadena = invalido(listString, listLengthMin, j);
+						cadena = invalido(listString, listLengthMin,listLengthMax, j);
 						listTupla.add(cadena);
 						++i;
 					} else {
@@ -89,16 +91,18 @@ public class TestCase {
 
 		return listTupla;
 	}
+	
+	
 
 	public String invalido(ArrayList<String> listString,
-			ArrayList<Integer> listLength, int posicion) {
+			ArrayList<Integer> listLengthMin, ArrayList<Integer> listLengthMax,  int posicion) {
 		String cadena = "";
 		Random r = new Random();
 		boolean emailBoolean = false;
 		boolean lengthBoolean = false;
 		boolean randomBoolean = false;
 
-		if (listLength.get(posicion) != null) {
+		if (listLengthMin.get(posicion) != null && listLengthMax.get(posicion)!=null) {
 			randomBoolean = r.nextBoolean();
 			if (randomBoolean == true) {
 				if (listString.get(posicion) != "Numeric"
@@ -117,35 +121,61 @@ public class TestCase {
 					}
 				}
 			} else {
-				lengthBoolean = r.nextBoolean();
-				if (lengthBoolean == true) {
+				if(listLengthMax.get(posicion)!= null && listLengthMin==null)
+				{
 					if (listString.get(posicion).equals("RandomText"))
-						cadena = df.getRandomText(listLength.get(posicion) + 1);
+						cadena = df.getRandomText(listLengthMax.get(posicion)+1);
 					if (listString.get(posicion).equals("RandomChars"))
-						cadena = df
-								.getRandomChars(listLength.get(posicion) + 1);
+						cadena = df.getRandomChars(listLengthMax.get(posicion)+1);
 					if (listString.get(posicion).equals("RandomWord"))
-						cadena = df.getRandomWord(listLength.get(posicion) + 1);
+						cadena = df.getRandomWord(listLengthMax.get(posicion)+1);
 					if (listString.get(posicion).equals("Alphanumeric"))
-						cadena = rsu.randomAlphanumeric(listLength
-								.get(posicion) + 1);
+						cadena = rsu.randomAlphanumeric(listLengthMax.get(posicion)+1);
 					if (listString.get(posicion).equals("Numeric"))
-						cadena = rsu
-								.randomNumeric(listLength.get(posicion) + 1);
+						cadena = rsu.randomNumeric(listLengthMax.get(posicion)+1);
 				} else {
-					if (listString.get(posicion).equals("RandomText"))
-						cadena = df.getRandomText(listLength.get(posicion) - 1);
-					if (listString.get(posicion).equals("RandomChars"))
-						cadena = df
-								.getRandomChars(listLength.get(posicion) - 1);
-					if (listString.get(posicion).equals("RandomWord"))
-						cadena = df.getRandomWord(listLength.get(posicion) - 1);
-					if (listString.get(posicion).equals("Alphanumeric"))
-						cadena = rsu.randomAlphanumeric(listLength
-								.get(posicion) - 1);
-					if (listString.get(posicion).equals("Numeric"))
-						cadena = rsu
-								.randomNumeric(listLength.get(posicion) - 1);
+					if(listLengthMin.get(posicion)!= null && listLengthMax==null){
+						if (listString.get(posicion).equals("RandomText"))
+							cadena = df.getRandomText(listLengthMin.get(posicion)-1);
+						if (listString.get(posicion).equals("RandomChars"))
+							cadena = df.getRandomChars(listLengthMin.get(posicion)-1);
+						if (listString.get(posicion).equals("RandomWord"))
+							cadena = df.getRandomWord(listLengthMin.get(posicion)-1);
+						if (listString.get(posicion).equals("Alphanumeric"))
+							cadena = rsu.randomAlphanumeric(listLengthMin.get(posicion)-1);
+						if (listString.get(posicion).equals("Numeric"))
+							cadena = rsu.randomNumeric(listLengthMin.get(posicion)-1);
+					}
+					else{
+						if(listLengthMax.get(posicion)!=null && listLengthMin.get(posicion)!= null){
+							lengthBoolean= r.nextBoolean();
+							if(lengthBoolean==true){
+								if (listString.get(posicion).equals("RandomText"))
+									cadena = df.getRandomText(listLengthMax.get(posicion)+1);
+								if (listString.get(posicion).equals("RandomChars"))
+									cadena = df.getRandomChars(listLengthMax.get(posicion)+1);
+								if (listString.get(posicion).equals("RandomWord"))
+									cadena = df.getRandomWord(listLengthMax.get(posicion)+1);
+								if (listString.get(posicion).equals("Alphanumeric"))
+									cadena = rsu.randomAlphanumeric(listLengthMax.get(posicion)+1);
+								if (listString.get(posicion).equals("Numeric"))
+									cadena = rsu.randomNumeric(listLengthMax.get(posicion)+1);
+							}
+							else{
+								if (listString.get(posicion).equals("RandomText"))
+									cadena = df.getRandomText(listLengthMin.get(posicion)-1);
+								if (listString.get(posicion).equals("RandomChars"))
+									cadena = df.getRandomChars(listLengthMin.get(posicion)-1);
+								if (listString.get(posicion).equals("RandomWord"))
+									cadena = df.getRandomWord(listLengthMin.get(posicion)-1);
+								if (listString.get(posicion).equals("Alphanumeric"))
+									cadena = rsu.randomAlphanumeric(listLengthMin.get(posicion)-1);
+								if (listString.get(posicion).equals("Numeric"))
+									cadena = rsu.randomNumeric(listLengthMin.get(posicion)-1);
+							}
+						}
+					}
+					
 				}
 			}
 

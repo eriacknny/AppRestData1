@@ -79,8 +79,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 				|| (comboType.getValue().equals("City"))) {
 
 			textValue.setDisabled(false);
-			//textLength.setValue("null");
-			//textLength.setDisabled(true);
+			// textLength.setValue("null");
+			// textLength.setDisabled(true);
 			dateBox.setDisabled(true);
 			listboxLenth.setVisible(false);
 
@@ -94,8 +94,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 					|| comboType.getValue().equals("Fecha YYYY-MM-DD")) {
 				dateBox.setDisabled(false);
 				textValue.setDisabled(true);
-				//textLength.setDisabled(true);
-				//textLength.setValue("null");
+				// textLength.setDisabled(true);
+				// textLength.setValue("null");
 				listboxLenth.setVisible(false);
 
 				if (comboType.getValue().equals("Fecha MM/DD/YYYY"))
@@ -112,8 +112,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 					dateBox.setFormat("dd/MM/yyyy");
 			} else {
 				listboxLenth.setVisible(true);
-				//textLength.setValue("null");
-				//textLength.setDisabled(true);
+				// textLength.setValue("null");
+				// textLength.setDisabled(true);
 				dateBox.setDisabled(true);
 				textValue.setDisabled(false);
 			}
@@ -147,8 +147,7 @@ public class AppRestDataController extends SelectorComposer<Component> {
 			if (textValue.getValue().equals("")) {
 				valorFecha = dateFormat.format(fecha);
 				cellvalue = new Listcell(valorFecha);
-			}
-			else
+			} else
 				cellvalue = new Listcell(textValue.getValue());
 
 			Listcell celllengthMin = new Listcell("null");
@@ -164,14 +163,26 @@ public class AppRestDataController extends SelectorComposer<Component> {
 			item.appendChild(cellrequired);
 			setData.appendChild(item);
 			setData.setSelectedItem(item);
-		}
-		else{
+		} else {
 			Listitem item = new Listitem();
 			Listcell cellname = new Listcell(textFieldName.getValue());
 			Listcell celltype = new Listcell(comboType.getValue());
 			Listcell cellvalue = new Listcell(textValue.getValue());
-			Listcell celllengthMin = new Listcell(intboxMin.getValue().toString());
-			Listcell celllengthMax = new Listcell(intboxMax.getValue().toString());
+			Listcell celllengthMin = null;
+			Listcell celllengthMax = null;
+			if (intboxMin.getValue() != null && intboxMax.getValue() != null) {
+				celllengthMin = new Listcell(intboxMin.getValue().toString());
+				celllengthMax = new Listcell(intboxMax.getValue().toString());
+			} else {
+				if (intboxMin.getValue() == null && intboxMax.getValue() != null) {
+					celllengthMin = new Listcell("null");
+					celllengthMax = new Listcell(intboxMax.getValue().toString());
+				} else {
+					celllengthMin = new Listcell(intboxMin.getValue().toString());
+					celllengthMax = new Listcell("null");
+				}
+			}
+
 			boolean required = checkRequired.isChecked();
 			String strRequired = Boolean.toString(required);
 			Listcell cellrequired = new Listcell(strRequired);
@@ -213,7 +224,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		DataFactory df = new DataFactory();
 		RandomStringUtils rsu = new RandomStringUtils();
 
-		ordenarParametros(listString, lista, listValuesValidate, listLengthMin,listLengthMax,listRequired);
+		ordenarParametros(listString, lista, listValuesValidate, listLengthMin,
+				listLengthMax, listRequired);
 		int lineas = Integer.parseInt(text_row.getValue());
 		int lineas_min = (3 + listString.size());
 		System.out.println("lineas: " + lineas);
@@ -237,11 +249,14 @@ public class AppRestDataController extends SelectorComposer<Component> {
 								List<Listitem> lista = setData.getItems();
 								int lineas = Integer.parseInt(text_row
 										.getValue());
-								ordenarParametros(listString, lista, listValuesValidate, listLengthMin,listLengthMax,listRequired);
+								ordenarParametros(listString, lista,
+										listValuesValidate, listLengthMin,
+										listLengthMax, listRequired);
 								int row = setData.getItemCount();
 								TestCase caso = new TestCase();
-								ArrayList<String> listCaso = caso.tupla(listString,
-										listValuesValidate, listLengthMin, listLengthMax);
+								ArrayList<String> listCaso = caso.tupla(
+										listString, listValuesValidate,
+										listLengthMin, listLengthMax);
 								for (int d = 0; d < listCaso.size(); ++d) {
 									listValuesText.add(listCaso.get(d));
 								}
@@ -267,7 +282,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	// Método para encontrar el orden de los parametros indicados
 	public void ordenarParametros(ArrayList<String> listString,
 			List<Listitem> lista, ArrayList<String> listValuesValidate,
-			ArrayList<Integer> listLengthMin,ArrayList<Integer> listLengthMax, ArrayList<Boolean> listRequired) {
+			ArrayList<Integer> listLengthMin, ArrayList<Integer> listLengthMax,
+			ArrayList<Boolean> listRequired) {
 		for (Listitem currentList : lista) {
 			List<Component> com = currentList.getChildren();
 
@@ -321,8 +337,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 						listLengthMin.add(Integer.parseInt(lc.getLabel()));
 					}
 				}
-				if(lc.getColumnIndex()==4){
-					if(lc.getLabel().equals("null"))
+				if (lc.getColumnIndex() == 4) {
+					if (lc.getLabel().equals("null"))
 						listLengthMax.add(null);
 					else
 						listLengthMax.add(Integer.parseInt(lc.getLabel()));
