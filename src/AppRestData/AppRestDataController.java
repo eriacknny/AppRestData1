@@ -293,39 +293,42 @@ public class AppRestDataController extends SelectorComposer<Component> {
 
 				String cadena = "";
 				if (lc.getColumnIndex() == 1) {
-					if (lc.getLabel().equals("FirstName")) {
+					if (lc.getLabel().equals("FirstName")) 
 						listString.add("FirstName");
-					}
-					if (lc.getLabel().equals("LastName")) {
+					if (lc.getLabel().equals("LastName")) 
 						listString.add("LastName");
-					}
-					if (lc.getLabel().equals("Email")) {
+					if (lc.getLabel().equals("Email")) 
 						listString.add("Email");
-					}
-					if (lc.getLabel().equals("BirthData")) {
+					if (lc.getLabel().equals("BirthData")) 
 						listString.add("BirthData");
-					}
-					if (lc.getLabel().equals("Address")) {
+					if (lc.getLabel().equals("Address")) 
 						listString.add("Address");
-					}
-					if (lc.getLabel().equals("City")) {
+					if (lc.getLabel().equals("City")) 
 						listString.add("City");
-					}
-					if (lc.getLabel().equals("RandomText")) {
+					if (lc.getLabel().equals("RandomText")) 
 						listString.add("RandomText");
-					}
-					if (lc.getLabel().equals("RandomChars")) {
+					if (lc.getLabel().equals("RandomChars")) 
 						listString.add("RandomChars");
-					}
-					if (lc.getLabel().equals("RandomWord")) {
+					if (lc.getLabel().equals("RandomWord")) 
 						listString.add("RandomWord");
-					}
-					if (lc.getLabel().equals("Alphanumeric")) {
+					if (lc.getLabel().equals("Alphanumeric")) 
 						listString.add("Alphanumeric");
-					}
-					if (lc.getLabel().equals("Numeric")) {
+					if (lc.getLabel().equals("Numeric")) 
 						listString.add("Numeric");
-					}
+					if(lc.getLabel().equals("Fecha DD/MM/YYYY"))
+						listString.add("Fecha DD/MM/YYYY");
+					if(lc.getLabel().equals("Fecha DD-MM-YYYY"))
+						listString.add("Fecha DD-MM-YYYY");
+					if(lc.getLabel().equals("Fecha MM/DD/YYYY"))
+						listString.add("Fecha MM/DD/YYYY");
+					if(lc.getLabel().equals("Fecha MM-DD-YYYY"))
+						listString.add("Fecha MM-DD-YYYY");
+					if(lc.getLabel().equals("Fecha YYYY/MM/DD"))
+						listString.add("Fecha YYYY/MM/DD");
+					if(lc.getLabel().equals("Fecha YYYY-MM-DD"))
+						listString.add("Fecha YYYY-MM-DD");
+					
+						
 				}
 				if (lc.getColumnIndex() == 2) {
 					listValuesValidate.add(lc.getLabel());

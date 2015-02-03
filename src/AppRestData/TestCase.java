@@ -65,7 +65,8 @@ public class TestCase {
 	}
 
 	public ArrayList<String> tupla(ArrayList<String> listString,
-			ArrayList<String> listValuesValidate, ArrayList<Integer> listLengthMin, ArrayList<Integer> listLengthMax) {
+			ArrayList<String> listValuesValidate,
+			ArrayList<Integer> listLengthMin, ArrayList<Integer> listLengthMax) {
 		ArrayList<String> listTupla = new ArrayList<String>();
 		ArrayList<String> listCombinaciones = combinaciones(listString);
 		String cadena = "";
@@ -78,7 +79,8 @@ public class TestCase {
 					++i;
 				} else {
 					if (listCombinaciones.get(i).equals("I")) {
-						cadena = invalido(listString, listLengthMin,listLengthMax, j);
+						cadena = invalido(listString, listLengthMin,
+								listLengthMax, j);
 						listTupla.add(cadena);
 						++i;
 					} else {
@@ -91,18 +93,18 @@ public class TestCase {
 
 		return listTupla;
 	}
-	
-	
 
 	public String invalido(ArrayList<String> listString,
-			ArrayList<Integer> listLengthMin, ArrayList<Integer> listLengthMax,  int posicion) {
+			ArrayList<Integer> listLengthMin, ArrayList<Integer> listLengthMax,
+			int posicion) {
 		String cadena = "";
 		Random r = new Random();
 		boolean emailBoolean = false;
 		boolean lengthBoolean = false;
 		boolean randomBoolean = false;
 
-		if (listLengthMin.get(posicion) != null && listLengthMax.get(posicion)!=null) {
+		if (listLengthMin.get(posicion) != null
+				&& listLengthMax.get(posicion) != null) {
 			randomBoolean = r.nextBoolean();
 			if (randomBoolean == true) {
 				if (listString.get(posicion) != "Numeric"
@@ -120,68 +122,105 @@ public class TestCase {
 							cadena = "email.com";
 					}
 				}
+
 			} else {
-				if(listLengthMax.get(posicion)!= null && listLengthMin==null)
-				{
+				if (listLengthMax.get(posicion) != null
+						&& listLengthMin == null) {
 					if (listString.get(posicion).equals("RandomText"))
-						cadena = df.getRandomText(listLengthMax.get(posicion)+1);
+						cadena = df
+								.getRandomText(listLengthMax.get(posicion) + 1);
 					if (listString.get(posicion).equals("RandomChars"))
-						cadena = df.getRandomChars(listLengthMax.get(posicion)+1);
+						cadena = df
+								.getRandomChars(listLengthMax.get(posicion) + 1);
 					if (listString.get(posicion).equals("RandomWord"))
-						cadena = df.getRandomWord(listLengthMax.get(posicion)+1);
+						cadena = df
+								.getRandomWord(listLengthMax.get(posicion) + 1);
 					if (listString.get(posicion).equals("Alphanumeric"))
-						cadena = rsu.randomAlphanumeric(listLengthMax.get(posicion)+1);
+						cadena = rsu.randomAlphanumeric(listLengthMax
+								.get(posicion) + 1);
 					if (listString.get(posicion).equals("Numeric"))
-						cadena = rsu.randomNumeric(listLengthMax.get(posicion)+1);
+						cadena = rsu
+								.randomNumeric(listLengthMax.get(posicion) + 1);
 				} else {
-					if(listLengthMin.get(posicion)!= null && listLengthMax==null){
+					if (listLengthMin.get(posicion) != null
+							&& listLengthMax == null) {
 						if (listString.get(posicion).equals("RandomText"))
-							cadena = df.getRandomText(listLengthMin.get(posicion)-1);
+							cadena = df.getRandomText(listLengthMin
+									.get(posicion) - 1);
 						if (listString.get(posicion).equals("RandomChars"))
-							cadena = df.getRandomChars(listLengthMin.get(posicion)-1);
+							cadena = df.getRandomChars(listLengthMin
+									.get(posicion) - 1);
 						if (listString.get(posicion).equals("RandomWord"))
-							cadena = df.getRandomWord(listLengthMin.get(posicion)-1);
+							cadena = df.getRandomWord(listLengthMin
+									.get(posicion) - 1);
 						if (listString.get(posicion).equals("Alphanumeric"))
-							cadena = rsu.randomAlphanumeric(listLengthMin.get(posicion)-1);
+							cadena = rsu.randomAlphanumeric(listLengthMin
+									.get(posicion) - 1);
 						if (listString.get(posicion).equals("Numeric"))
-							cadena = rsu.randomNumeric(listLengthMin.get(posicion)-1);
-					}
-					else{
-						if(listLengthMax.get(posicion)!=null && listLengthMin.get(posicion)!= null){
-							lengthBoolean= r.nextBoolean();
-							if(lengthBoolean==true){
-								if (listString.get(posicion).equals("RandomText"))
-									cadena = df.getRandomText(listLengthMax.get(posicion)+1);
-								if (listString.get(posicion).equals("RandomChars"))
-									cadena = df.getRandomChars(listLengthMax.get(posicion)+1);
-								if (listString.get(posicion).equals("RandomWord"))
-									cadena = df.getRandomWord(listLengthMax.get(posicion)+1);
-								if (listString.get(posicion).equals("Alphanumeric"))
-									cadena = rsu.randomAlphanumeric(listLengthMax.get(posicion)+1);
+							cadena = rsu.randomNumeric(listLengthMin
+									.get(posicion) - 1);
+					} else {
+						if (listLengthMax.get(posicion) != null
+								&& listLengthMin.get(posicion) != null) {
+							lengthBoolean = r.nextBoolean();
+							if (lengthBoolean == true) {
+								if (listString.get(posicion).equals(
+										"RandomText"))
+									cadena = df.getRandomText(listLengthMax
+											.get(posicion) + 1);
+								if (listString.get(posicion).equals(
+										"RandomChars"))
+									cadena = df.getRandomChars(listLengthMax
+											.get(posicion) + 1);
+								if (listString.get(posicion).equals(
+										"RandomWord"))
+									cadena = df.getRandomWord(listLengthMax
+											.get(posicion) + 1);
+								if (listString.get(posicion).equals(
+										"Alphanumeric"))
+									cadena = rsu
+											.randomAlphanumeric(listLengthMax
+													.get(posicion) + 1);
 								if (listString.get(posicion).equals("Numeric"))
-									cadena = rsu.randomNumeric(listLengthMax.get(posicion)+1);
-							}
-							else{
-								if (listString.get(posicion).equals("RandomText"))
-									cadena = df.getRandomText(listLengthMin.get(posicion)-1);
-								if (listString.get(posicion).equals("RandomChars"))
-									cadena = df.getRandomChars(listLengthMin.get(posicion)-1);
-								if (listString.get(posicion).equals("RandomWord"))
-									cadena = df.getRandomWord(listLengthMin.get(posicion)-1);
-								if (listString.get(posicion).equals("Alphanumeric"))
-									cadena = rsu.randomAlphanumeric(listLengthMin.get(posicion)-1);
+									cadena = rsu.randomNumeric(listLengthMax
+											.get(posicion) + 1);
+							} else {
+								if (listString.get(posicion).equals(
+										"RandomText"))
+									cadena = df.getRandomText(listLengthMin
+											.get(posicion) - 1);
+								if (listString.get(posicion).equals(
+										"RandomChars"))
+									cadena = df.getRandomChars(listLengthMin
+											.get(posicion) - 1);
+								if (listString.get(posicion).equals(
+										"RandomWord"))
+									cadena = df.getRandomWord(listLengthMin
+											.get(posicion) - 1);
+								if (listString.get(posicion).equals(
+										"Alphanumeric"))
+									cadena = rsu
+											.randomAlphanumeric(listLengthMin
+													.get(posicion) - 1);
 								if (listString.get(posicion).equals("Numeric"))
-									cadena = rsu.randomNumeric(listLengthMin.get(posicion)-1);
+									cadena = rsu.randomNumeric(listLengthMin
+											.get(posicion) - 1);
 							}
 						}
 					}
-					
+
 				}
 			}
 
 		} else {
 			if (listString.get(posicion) != "Numeric"
-					&& listString.get(posicion) != "Email") {
+					&& listString.get(posicion) != "Email"
+					&& listString.get(posicion) != "Fecha DD-MM-YYYY"
+					&& listString.get(posicion) != "Fecha MM/DD/YYYY"
+					&& listString.get(posicion) != "Fecha MM-DD-YYYY"
+					&& listString.get(posicion) != "Fecha YYYY/MM/DD"
+					&& listString.get(posicion) != "Fecha YYYY-MM-DD") {
+				
 				cadena = "86...*_34";
 			} else {
 				if (listString.get(posicion).equals("Numeric")) {
@@ -194,6 +233,63 @@ public class TestCase {
 					else
 						cadena = "email.com";
 				}
+				if (listString.get(posicion).equals("Fecha DD-MM-YYYY")
+						|| listString.get(posicion).equals("Fecha MM/DD/YYYY")
+						|| listString.get(posicion).equals("Fecha MM-DD-YYYY")
+						|| listString.get(posicion).equals("Fecha YYYY/MM/DD")
+						|| listString.get(posicion).equals("Fecha YYYY-MM-DD")) {
+					cadena = casesFecha(listString, posicion);
+				}
+			}
+		}
+
+		return cadena;
+	}
+
+	public String casesFecha(ArrayList<String> listString, int posicion) {
+		String cadena = "";
+		String op = "";
+		boolean caso = false;
+		Random r = new Random();
+
+		for (int i = 0; i < listString.size(); ++i) {
+			op = listString.get(i);
+			switch (op) {
+			case "Fecha DD-MM-YYYY":
+				caso = r.nextBoolean();
+				if (caso == true)
+					cadena = "21-01-YYYY";
+				else
+					cadena = "21-13-2015";
+				break;
+			case "Fecha MM/DD/YYYY":
+				caso = r.nextBoolean();
+				if (caso == true)
+					cadena = "21/01/YYYY";
+				else
+					cadena = "21/13/2015";
+				break;
+			case "Fecha MM-DD-YYYY":
+				if (caso == true)
+					cadena = "01-21-YYYY";
+				else
+					cadena = "13-21-2015";
+				break;
+			case "Fecha YYYY/MM/DD":
+				if (caso == true)
+					cadena = "YYYY/01/21";
+				else
+					cadena = "2015/13/21";
+				break;
+			case "Fecha YYYY-MM-DD":
+				if (caso == true)
+					cadena = "YYYY/01/21";
+				else
+					cadena = "2015/13/21";
+				break;
+
+			default:
+				break;
 			}
 		}
 
