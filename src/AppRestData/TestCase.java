@@ -94,15 +94,15 @@ public class TestCase {
 		return listTupla;
 	}
 
-	public String invalido(ArrayList<String> listString,
-			ArrayList<Integer> listLengthMin, ArrayList<Integer> listLengthMax,
-			int posicion) {
+	public String invalido(ArrayList<String> listString, ArrayList<Integer> listLengthMin, ArrayList<Integer> listLengthMax,int posicion) {
+		
 		String cadena = "";
 		Random r = new Random();
 		boolean emailBoolean = false;
 		boolean lengthBoolean = false;
 		boolean randomBoolean = false;
-
+	
+		
 		if (listLengthMin.get(posicion) != null
 				&& listLengthMax.get(posicion) != null) {
 			randomBoolean = r.nextBoolean();
@@ -220,7 +220,7 @@ public class TestCase {
 					&& listString.get(posicion) != "Fecha MM-DD-YYYY"
 					&& listString.get(posicion) != "Fecha YYYY/MM/DD"
 					&& listString.get(posicion) != "Fecha YYYY-MM-DD") {
-				
+
 				cadena = "86...*_34";
 			} else {
 				if (listString.get(posicion).equals("Numeric")) {
@@ -241,8 +241,8 @@ public class TestCase {
 					cadena = casesFecha(listString, posicion);
 				}
 			}
+		
 		}
-
 		return cadena;
 	}
 

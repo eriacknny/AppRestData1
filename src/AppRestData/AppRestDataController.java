@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.fluttercode.datafactory.impl.DataFactory;
+import org.zkoss.json.JSONArray;
+import org.zkoss.json.JSONObject;
 import org.zkoss.zhtml.Button;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.DropEvent;
@@ -217,15 +219,17 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		ArrayList<String> listString = new ArrayList<>();
 		ArrayList<String> listValuesValidate = new ArrayList<>();
 		ArrayList<String> listValuesText = new ArrayList<>();
+		ArrayList<String> listCampo = new ArrayList<>();
 		ArrayList<Integer> listLengthMin = new ArrayList();
 		ArrayList<Integer> listLengthMax = new ArrayList<>();
 		ArrayList<Boolean> listRequired = new ArrayList<>();
+		
 		List<Listitem> lista = setData.getItems();
 		DataFactory df = new DataFactory();
 		RandomStringUtils rsu = new RandomStringUtils();
 
 		ordenarParametros(listString, lista, listValuesValidate, listLengthMin,
-				listLengthMax, listRequired);
+				listLengthMax, listRequired,listCampo);
 		int lineas = Integer.parseInt(text_row.getValue());
 		int lineas_min = (3 + listString.size());
 		System.out.println("lineas: " + lineas);
@@ -243,25 +247,19 @@ public class AppRestDataController extends SelectorComposer<Component> {
 								ArrayList<String> listString = new ArrayList<>();
 								ArrayList<String> listValuesValidate = new ArrayList<>();
 								ArrayList<String> listValuesText = new ArrayList<>();
+								ArrayList<String> listCampo = new ArrayList<>();
 								ArrayList<Integer> listLengthMin = new ArrayList();
 								ArrayList<Integer> listLengthMax = new ArrayList<>();
 								ArrayList<Boolean> listRequired = new ArrayList<>();
 								List<Listitem> lista = setData.getItems();
-								int lineas = Integer.parseInt(text_row
-										.getValue());
-								ordenarParametros(listString, lista,
-										listValuesValidate, listLengthMin,
-										listLengthMax, listRequired);
+								int lineas = Integer.parseInt(text_row.getValue());
+								ordenarParametros(listString, lista,listValuesValidate, listLengthMin,listLengthMax, listRequired,listCampo);
 								int row = setData.getItemCount();
 								TestCase caso = new TestCase();
-								ArrayList<String> listCaso = caso.tupla(
-										listString, listValuesValidate,
-										listLengthMin, listLengthMax);
+								ArrayList<String> listCaso = caso.tupla(listString, listValuesValidate,listLengthMin, listLengthMax);
 								for (int d = 0; d < listCaso.size(); ++d) {
 									listValuesText.add(listCaso.get(d));
 								}
-								System.out.println(listValuesText);
-
 							}
 						}
 					});
@@ -271,10 +269,11 @@ public class AppRestDataController extends SelectorComposer<Component> {
 			TestCase caso = new TestCase();
 			ArrayList<String> listCaso = caso.tupla(listString,
 					listValuesValidate, listLengthMin, listLengthMax);
-			// ArrayList<String> listCaso = caso.casosOpciones(listString,
-			// listLength, listValuesValidate, listRequired);
 			System.out.println(listCaso);
-			generateTXT(row, lineas, listCaso);
+			RestClient rest = new RestClient();
+			JSONArray listJson = rest.gerenateJson(listCaso, listCampo);
+			rest.post(listJson);
+			//generateTXT(row, lineas, listCaso);
 		}
 
 	}
@@ -283,7 +282,7 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	public void ordenarParametros(ArrayList<String> listString,
 			List<Listitem> lista, ArrayList<String> listValuesValidate,
 			ArrayList<Integer> listLengthMin, ArrayList<Integer> listLengthMax,
-			ArrayList<Boolean> listRequired) {
+			ArrayList<Boolean> listRequired, ArrayList<String> listCampo) {
 		for (Listitem currentList : lista) {
 			List<Component> com = currentList.getChildren();
 
@@ -292,6 +291,9 @@ public class AppRestDataController extends SelectorComposer<Component> {
 				Listcell lc = (Listcell) currentComp;
 
 				String cadena = "";
+				if(lc.getColumnIndex() == 0){
+					listCampo.add(lc.getLabel());
+				}
 				if (lc.getColumnIndex() == 1) {
 					if (lc.getLabel().equals("FirstName")) 
 						listString.add("FirstName");

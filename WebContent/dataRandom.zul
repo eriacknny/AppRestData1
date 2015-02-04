@@ -10,7 +10,7 @@
 					<listheader label="Data Type" />
 					<listheader label="Value" />
 					<listheader label="Length Min" />
-					<listheader label="Length Max"/>
+					<listheader label="Length Max" />
 					<listheader label="Required" />
 				</listhead>
 			</listbox>
@@ -26,6 +26,7 @@
 						<label value="Data Type:"></label>
 						<combobox id="comboType" width="120px"
 							readonly="true">
+						
 							<comboitem label="FirstName"
 								id="comboFirstName">
 							</comboitem>
