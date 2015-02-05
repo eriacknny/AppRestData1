@@ -84,7 +84,7 @@ public class TestCase {
 						listTupla.add(cadena);
 						++i;
 					} else {
-						listTupla.add("Vacio");
+						listTupla.add("  ");
 						++i;
 					}
 				}

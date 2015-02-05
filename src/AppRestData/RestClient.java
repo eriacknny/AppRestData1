@@ -1,9 +1,11 @@
 package AppRestData;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -29,50 +31,101 @@ public class RestClient {
 	}
 
 	public void post(JSONArray listJson) {
-		final String targetURL = "http://certificacion.educatablet.com:9090/WSLocation.svc/GetCountries";
+		final String targetURL = "http://certificacion.educatablet.com:9090/WSUser.svc/Login";
 		try {
-			URL targetUrl = new URL(targetURL);
-			HttpURLConnection httpConnection = (HttpURLConnection) targetUrl.openConnection();
-			httpConnection.setDoOutput(true);
-			httpConnection.setDoInput(true);
-			httpConnection.setRequestMethod("POST");
-			httpConnection.setRequestProperty("Content-Type","application/json");
-			httpConnection.setRequestProperty("X-Auth-device-token","mszrkhB3FUCD4ZP+2flTme6HJ2Os4dZz4hBAutg5DN/e7s4bdmDP7g==");
-			httpConnection.setRequestProperty("X-Auth-key","zD0sXXcNEMeqZRvIOkfc6IM0qxesfrDO");
 			
-			OutputStreamWriter wr = new OutputStreamWriter(httpConnection.getOutputStream());
-			BufferedReader br= null;
 			for (int i = 0; i < listJson.size(); ++i) {
-				System.out.println(i);
-				
+				URL targetUrl = new URL(targetURL);
+				HttpURLConnection httpConnection = (HttpURLConnection) targetUrl.openConnection();
+				httpConnection.setDoOutput(true);
+				httpConnection.setDoInput(true);
+				httpConnection.setRequestMethod("POST");
+				httpConnection.setRequestProperty("Content-Type","application/json");
+				httpConnection.setRequestProperty("X-Auth-device-token","mszrkhB3FUCD4ZP+2flTme6HJ2Os4dZz4hBAutg5DN/e7s4bdmDP7g==");
+				httpConnection.setRequestProperty("X-Auth-key","zD0sXXcNEMeqZRvIOkfc6IM0qxesfrDO");
+
+				OutputStreamWriter wr = new OutputStreamWriter(httpConnection.getOutputStream());
+						
 				wr.write(listJson.get(i).toString());
 				wr.flush();
 				int httpResult = httpConnection.getResponseCode();
 				StringBuilder sb = new StringBuilder();
 				
 					if (httpResult == HttpURLConnection.HTTP_OK) {
-						br = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(), "utf-8"));
+						BufferedReader br= new BufferedReader(new InputStreamReader(httpConnection.getInputStream(), "utf-8"));
 						String line = null;
 							while ((line = br.readLine()) != null) {
 								sb.append(line + "/n");
 							}
-						
+							br.close();
 						System.out.println(httpResult + " "+ httpConnection.getResponseMessage());
 						System.out.println(sb.toString());
-						sb = null;
+					
 						
 				
 					} else {
-						System.out.println(httpResult +" "+ httpConnection.getResponseMessage());		
+						BufferedReader br= new BufferedReader(new InputStreamReader(httpConnection.getInputStream(), "utf-8"));
+						String line = null;
+							while ((line = br.readLine()) != null) {
+								sb.append(line + "/n");
+							}
+							br.close();
+						System.out.println(httpResult + " "+ httpConnection.getResponseMessage());
+						System.out.println(sb.toString());
+			
 						
 					}
+				
 			}
-			br.close();
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-	}
+	}	
+	
+	
+	public void get() {
+		final String targetURL = "";
+		try {
 
+			URL restServiceURL = new URL(targetURL);
+
+			HttpURLConnection httpConnection = (HttpURLConnection) restServiceURL.openConnection();
+			httpConnection.setRequestMethod("GET");
+			httpConnection.setRequestProperty("Accept", "application/json");
+
+			int httpResult = httpConnection.getResponseCode();
+
+			if (httpConnection.getResponseCode() != 200) {
+				throw new RuntimeException(
+						"HTTP GET Request Failed with Error code : "
+								+ httpConnection.getResponseCode());
+			}
+
+			BufferedReader responseBuffer = new BufferedReader(new InputStreamReader((httpConnection.getInputStream())));
+
+			String output;
+
+			System.out.println(httpResult + " "+ httpConnection.getResponseMessage());
+
+			while ((output = responseBuffer.readLine()) != null) {
+				System.out.println(output);
+			}
+
+			httpConnection.disconnect();
+
+		} catch (MalformedURLException e) {
+
+			e.printStackTrace();
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+
+		}
+
+	}
+	
 }

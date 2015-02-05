@@ -57,8 +57,6 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	@Wire
 	private Textbox textValue;
 	@Wire
-	private Textbox textLength;
-	@Wire
 	private Checkbox checkRequired;
 	@Wire
 	private Datebox dateBox;
@@ -165,6 +163,7 @@ public class AppRestDataController extends SelectorComposer<Component> {
 			item.appendChild(cellrequired);
 			setData.appendChild(item);
 			setData.setSelectedItem(item);
+			limpiar();
 		} else {
 			Listitem item = new Listitem();
 			Listcell cellname = new Listcell(textFieldName.getValue());
@@ -196,8 +195,9 @@ public class AppRestDataController extends SelectorComposer<Component> {
 			item.appendChild(cellrequired);
 			setData.appendChild(item);
 			setData.setSelectedItem(item);
+			limpiar();
 		}
-
+		
 	}
 
 	// Metodo para eliminar una fila
@@ -387,6 +387,19 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		} finally {
 			salida.close();
 		}
+	}
+	
+	
+	public void limpiar(){
+		textFieldName.setValue("");
+		comboType.setValue("");
+		textValue.setValue("");
+		checkRequired.setValue(null);
+		dateBox.setValue(null);
+		intboxMin.setValue(null);
+		intboxMax.setValue(null);
+		
+	
 	}
 
 }
