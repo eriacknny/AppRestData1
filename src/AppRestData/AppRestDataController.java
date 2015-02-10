@@ -2,6 +2,7 @@ package AppRestData;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,8 +37,13 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 import AppRestData.TestCase;
+import Dao.headerDao;
+import Dao.requestDao;
+import Modelo.header;
+import Modelo.request;
 
 public class AppRestDataController extends SelectorComposer<Component> {
 
@@ -75,11 +81,11 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	private Intbox intboxMax;
 	@Wire
 	private Tabbox tabbox;
-	@Wire 
+	@Wire
 	private Tab tab_csv;
-	@Wire 
+	@Wire
 	private Tab tab_exel;
-	@Wire 
+	@Wire
 	private Tab tab_json;
 	@Wire
 	private Textbox text_header;
@@ -87,10 +93,12 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	private Textbox text_value;
 	@Wire
 	private Button add_item_header;
-	@Wire 
+	@Wire
 	private Button detele_item_header;
-	
-	
+	@Wire
+	private Textbox text_url;
+	@Wire
+	private Textbox text_nameService;
 
 	// Metodo para bloquear el campo longitud que el caso de que el tipo de
 	// valor no amerite longitud
@@ -145,24 +153,24 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		}
 
 	}
-	
+
 	@Listen("onClick = #tab_json ")
-	public void heightTabbox(){
+	public void heightTabbox() {
 		tabbox.setHeight("250px");
 	}
-	
+
 	@Listen("onClick = #tab_csv ")
-	public void heightTabbox1(){
+	public void heightTabbox1() {
 		tabbox.setHeight("100px");
 	}
-	
+
 	@Listen("onClick = #tab_exel ")
-	public void heightTabbox2(){
+	public void heightTabbox2() {
 		tabbox.setHeight("100px");
 	}
-	
+
 	@Listen("onClick = #add_item_header ")
-	public void addItemHeader(){
+	public void addItemHeader() {
 		Listitem item = new Listitem();
 		Listcell cellHeader = new Listcell(text_header.getValue());
 		Listcell cellValue = new Listcell(text_value.getValue());
@@ -172,9 +180,9 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		set_headers.setSelectedItem(item);
 		limpiar1();
 	}
-	
+
 	@Listen("onClick = #detele_item_header ")
-	public void deleteItemHeader(){
+	public void deleteItemHeader() {
 		int index = set_headers.getSelectedIndex();
 		System.out.println(index);
 		if (index >= 0) {
@@ -185,7 +193,6 @@ public class AppRestDataController extends SelectorComposer<Component> {
 			alert("Please select an item first!");
 		}
 	}
-	
 
 	// Metodo para agragar una fila a la tabla
 	@Listen("onClick = #add_item")
@@ -241,11 +248,14 @@ public class AppRestDataController extends SelectorComposer<Component> {
 				celllengthMin = new Listcell(intboxMin.getValue().toString());
 				celllengthMax = new Listcell(intboxMax.getValue().toString());
 			} else {
-				if (intboxMin.getValue() == null && intboxMax.getValue() != null) {
+				if (intboxMin.getValue() == null
+						&& intboxMax.getValue() != null) {
 					celllengthMin = new Listcell("null");
-					celllengthMax = new Listcell(intboxMax.getValue().toString());
+					celllengthMax = new Listcell(intboxMax.getValue()
+							.toString());
 				} else {
-					celllengthMin = new Listcell(intboxMin.getValue().toString());
+					celllengthMin = new Listcell(intboxMin.getValue()
+							.toString());
 					celllengthMax = new Listcell("null");
 				}
 			}
@@ -263,12 +273,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 			setData.setSelectedItem(item);
 			limpiar();
 		}
-		
+
 	}
-	
-	
-	
-	
 
 	// Metodo para eliminar una fila
 	@Listen("onClick = #detete_item")
@@ -293,60 +299,53 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		ArrayList<Integer> listLengthMin = new ArrayList();
 		ArrayList<Integer> listLengthMax = new ArrayList<>();
 		ArrayList<Boolean> listRequired = new ArrayList<>();
+		ArrayList<String> listHeader = new ArrayList<>();
+		ArrayList<String> listValueHeader = new ArrayList<>();
+		
 		
 		List<Listitem> lista = setData.getItems();
-		DataFactory df = new DataFactory();
-		RandomStringUtils rsu = new RandomStringUtils();
+		List<Listitem> lista1 = set_headers.getItems();
 
-		ordenarParametros(listString, lista, listValuesValidate, listLengthMin,
-				listLengthMax, listRequired,listCampo);
+		ordenarParametros(listString, lista, listValuesValidate, listLengthMin,listLengthMax, listRequired, listCampo);
+		obtenerHeaders(listHeader, listValueHeader, lista1);
 		int lineas = Integer.parseInt(text_row.getValue());
 		int lineas_min = (3 + listString.size());
-		System.out.println("lineas: " + lineas);
-		System.out.println("lineas_min: " + lineas_min);
-		if (lineas < lineas_min) {
-			Messagebox mensaje = new Messagebox();
-			mensaje.show("Are you sure?", "Question", Messagebox.OK
-					| Messagebox.CANCEL, Messagebox.QUESTION,
-					new EventListener<Event>() {
-						@Override
-						public void onEvent(Event event) throws Exception {
-							if ("onCancel".equals(event.getName())) {
-								text_row.setValue("");
-							} else {
-								ArrayList<String> listString = new ArrayList<>();
-								ArrayList<String> listValuesValidate = new ArrayList<>();
-								ArrayList<String> listValuesText = new ArrayList<>();
-								ArrayList<String> listCampo = new ArrayList<>();
-								ArrayList<Integer> listLengthMin = new ArrayList();
-								ArrayList<Integer> listLengthMax = new ArrayList<>();
-								ArrayList<Boolean> listRequired = new ArrayList<>();
-								List<Listitem> lista = setData.getItems();
-								int lineas = Integer.parseInt(text_row.getValue());
-								ordenarParametros(listString, lista,listValuesValidate, listLengthMin,listLengthMax, listRequired,listCampo);
-								int row = setData.getItemCount();
-								TestCase caso = new TestCase();
-								ArrayList<String> listCaso = caso.tupla(listString, listValuesValidate,listLengthMin, listLengthMax);
-								for (int d = 0; d < listCaso.size(); ++d) {
-									listValuesText.add(listCaso.get(d));
-								}
-							}
-						}
-					});
-		} else {
-			int row = setData.getItemCount();
 
-			/*TestCase caso = new TestCase();
-			ArrayList<String> listCaso = caso.tupla(listString,
-					listValuesValidate, listLengthMin, listLengthMax);
-			System.out.println(listCaso);
-			RestClient rest = new RestClient();
-			JSONArray listJson = rest.gerenateJson(listCaso, listCampo);
-			rest.post(listJson);
-			//generateTXT(row, lineas, listCaso);*/
+		int row = setData.getItemCount();
+
 		
+		 TestCase caso = new TestCase(); 
+		 ArrayList<String> listCaso = caso.tupla(listString, listValuesValidate, listLengthMin,listLengthMax); 
+		 System.out.println(listCaso); 
+		 RestClient rest = new RestClient(); 
+		 JSONArray listJson = rest.gerenateJson(listCaso,listCampo); 
+		 //rest.post(listJson);
+		 
+		 Date date= new Date(); 
+		 Timestamp time = new Timestamp(date.getTime());
+		 request request = new request();
+		 request.setUrl(text_url.getValue());
+		 request.setJson_request(listJson);
+		 request.setName(text_nameService.getValue());
+		 request.setTime(time);
+		 
+		 requestDao requestDao = new requestDao();
+		 Boolean registro = null;
+		 registro = requestDao.registrarRequest(request);
+		 System.out.println("Registro:" + registro);
+		 
+		 for(int h=0; h<listHeader.size();++h){
+			 header header = new header();
+			 header.setName(listHeader.get(h));
+			 header.setValue(listValueHeader.get(h));
+			 headerDao headerDao = new headerDao();
+			 Boolean registroH = headerDao.registrarHeader(header, request);
+			 System.out.println("Registro header:" + registroH);
+		 }
+		 
 		
-		}
+		 //GenerateTXT(row, lineas, listCaso);
+		 
 
 	}
 
@@ -363,46 +362,45 @@ public class AppRestDataController extends SelectorComposer<Component> {
 				Listcell lc = (Listcell) currentComp;
 
 				String cadena = "";
-				if(lc.getColumnIndex() == 0){
+				if (lc.getColumnIndex() == 0) {
 					listCampo.add(lc.getLabel());
 				}
 				if (lc.getColumnIndex() == 1) {
-					if (lc.getLabel().equals("FirstName")) 
+					if (lc.getLabel().equals("FirstName"))
 						listString.add("FirstName");
-					if (lc.getLabel().equals("LastName")) 
+					if (lc.getLabel().equals("LastName"))
 						listString.add("LastName");
-					if (lc.getLabel().equals("Email")) 
+					if (lc.getLabel().equals("Email"))
 						listString.add("Email");
-					if (lc.getLabel().equals("BirthData")) 
+					if (lc.getLabel().equals("BirthData"))
 						listString.add("BirthData");
-					if (lc.getLabel().equals("Address")) 
+					if (lc.getLabel().equals("Address"))
 						listString.add("Address");
-					if (lc.getLabel().equals("City")) 
+					if (lc.getLabel().equals("City"))
 						listString.add("City");
-					if (lc.getLabel().equals("RandomText")) 
+					if (lc.getLabel().equals("RandomText"))
 						listString.add("RandomText");
-					if (lc.getLabel().equals("RandomChars")) 
+					if (lc.getLabel().equals("RandomChars"))
 						listString.add("RandomChars");
-					if (lc.getLabel().equals("RandomWord")) 
+					if (lc.getLabel().equals("RandomWord"))
 						listString.add("RandomWord");
-					if (lc.getLabel().equals("Alphanumeric")) 
+					if (lc.getLabel().equals("Alphanumeric"))
 						listString.add("Alphanumeric");
-					if (lc.getLabel().equals("Numeric")) 
+					if (lc.getLabel().equals("Numeric"))
 						listString.add("Numeric");
-					if(lc.getLabel().equals("Fecha DD/MM/YYYY"))
+					if (lc.getLabel().equals("Fecha DD/MM/YYYY"))
 						listString.add("Fecha DD/MM/YYYY");
-					if(lc.getLabel().equals("Fecha DD-MM-YYYY"))
+					if (lc.getLabel().equals("Fecha DD-MM-YYYY"))
 						listString.add("Fecha DD-MM-YYYY");
-					if(lc.getLabel().equals("Fecha MM/DD/YYYY"))
+					if (lc.getLabel().equals("Fecha MM/DD/YYYY"))
 						listString.add("Fecha MM/DD/YYYY");
-					if(lc.getLabel().equals("Fecha MM-DD-YYYY"))
+					if (lc.getLabel().equals("Fecha MM-DD-YYYY"))
 						listString.add("Fecha MM-DD-YYYY");
-					if(lc.getLabel().equals("Fecha YYYY/MM/DD"))
+					if (lc.getLabel().equals("Fecha YYYY/MM/DD"))
 						listString.add("Fecha YYYY/MM/DD");
-					if(lc.getLabel().equals("Fecha YYYY-MM-DD"))
+					if (lc.getLabel().equals("Fecha YYYY-MM-DD"))
 						listString.add("Fecha YYYY-MM-DD");
-					
-						
+
 				}
 				if (lc.getColumnIndex() == 2) {
 					listValuesValidate.add(lc.getLabel());
@@ -428,6 +426,23 @@ public class AppRestDataController extends SelectorComposer<Component> {
 			}
 		}
 	}
+
+	public void obtenerHeaders(ArrayList<String> listHeader,ArrayList<String> listValueHeader, List<Listitem> lista1) {
+		for (Listitem currentList : lista1) {
+			List<Component> com = currentList.getChildren();
+			for (Component currentComp : com) {
+				Listcell lc = (Listcell) currentComp;
+				String cadena = "";
+				if (lc.getColumnIndex() == 0) {
+					listHeader.add(lc.getLabel());
+				}
+				if(lc.getColumnIndex()==1){
+					listValueHeader.add(lc.getLabel());
+				}
+			}
+		}
+	}
+	
 
 	// Metodo para crear el un archivo TXT
 	public void generateTXT(int row, int lineas, ArrayList<String> listCaso) {
@@ -460,9 +475,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 			salida.close();
 		}
 	}
-	
-	
-	public void limpiar(){
+
+	public void limpiar() {
 		textFieldName.setValue("");
 		comboType.setValue("");
 		textValue.setValue("");
@@ -470,11 +484,10 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		dateBox.setValue(null);
 		intboxMin.setValue(null);
 		intboxMax.setValue(null);
-		
-	
+
 	}
-	
-	public void limpiar1(){
+
+	public void limpiar1() {
 		text_header.setValue("");
 		text_value.setValue("");
 	}
