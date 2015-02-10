@@ -31,13 +31,20 @@ import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
+
+
 import AppRestData.TestCase;
 
 public class AppRestDataController extends SelectorComposer<Component> {
 
 	@Wire
 	private Listbox setData;
+	@Wire
+	private Listbox set_headers;
 	@Wire
 	private Button add_item;
 	@Wire
@@ -66,6 +73,24 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	private Intbox intboxMin;
 	@Wire
 	private Intbox intboxMax;
+	@Wire
+	private Tabbox tabbox;
+	@Wire 
+	private Tab tab_csv;
+	@Wire 
+	private Tab tab_exel;
+	@Wire 
+	private Tab tab_json;
+	@Wire
+	private Textbox text_header;
+	@Wire
+	private Textbox text_value;
+	@Wire
+	private Button add_item_header;
+	@Wire 
+	private Button detele_item_header;
+	
+	
 
 	// Metodo para bloquear el campo longitud que el caso de que el tipo de
 	// valor no amerite longitud
@@ -120,6 +145,47 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		}
 
 	}
+	
+	@Listen("onClick = #tab_json ")
+	public void heightTabbox(){
+		tabbox.setHeight("250px");
+	}
+	
+	@Listen("onClick = #tab_csv ")
+	public void heightTabbox1(){
+		tabbox.setHeight("100px");
+	}
+	
+	@Listen("onClick = #tab_exel ")
+	public void heightTabbox2(){
+		tabbox.setHeight("100px");
+	}
+	
+	@Listen("onClick = #add_item_header ")
+	public void addItemHeader(){
+		Listitem item = new Listitem();
+		Listcell cellHeader = new Listcell(text_header.getValue());
+		Listcell cellValue = new Listcell(text_value.getValue());
+		item.appendChild(cellHeader);
+		item.appendChild(cellValue);
+		set_headers.appendChild(item);
+		set_headers.setSelectedItem(item);
+		limpiar1();
+	}
+	
+	@Listen("onClick = #detele_item_header ")
+	public void deleteItemHeader(){
+		int index = set_headers.getSelectedIndex();
+		System.out.println(index);
+		if (index >= 0) {
+			// remove the selected item
+			set_headers.removeItemAt(index);
+		} else {
+			// a easy way to show a message to user
+			alert("Please select an item first!");
+		}
+	}
+	
 
 	// Metodo para agragar una fila a la tabla
 	@Listen("onClick = #add_item")
@@ -199,6 +265,10 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		}
 		
 	}
+	
+	
+	
+	
 
 	// Metodo para eliminar una fila
 	@Listen("onClick = #detete_item")
@@ -266,14 +336,16 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		} else {
 			int row = setData.getItemCount();
 
-			TestCase caso = new TestCase();
+			/*TestCase caso = new TestCase();
 			ArrayList<String> listCaso = caso.tupla(listString,
 					listValuesValidate, listLengthMin, listLengthMax);
 			System.out.println(listCaso);
 			RestClient rest = new RestClient();
 			JSONArray listJson = rest.gerenateJson(listCaso, listCampo);
 			rest.post(listJson);
-			//generateTXT(row, lineas, listCaso);
+			//generateTXT(row, lineas, listCaso);*/
+		
+		
 		}
 
 	}
@@ -400,6 +472,11 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		intboxMax.setValue(null);
 		
 	
+	}
+	
+	public void limpiar1(){
+		text_header.setValue("");
+		text_value.setValue("");
 	}
 
 }

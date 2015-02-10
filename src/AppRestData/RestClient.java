@@ -71,13 +71,11 @@ public class RestClient {
 							}
 							br.close();
 						System.out.println(httpResult + " "+ httpConnection.getResponseMessage());
-						System.out.println(sb.toString());
-			
+						System.out.println(sb.toString());		
 						
 					}
 				
-			}
-			
+			}		
 
 		} catch (Exception e) {
 			e.printStackTrace();
