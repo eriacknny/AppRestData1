@@ -11,6 +11,8 @@ public class request {
 	JSONArray json_request;
 	String name;
 	Date time;
+	char status;
+	
 	
 	public int getId_request() {
 		return id_request;
@@ -42,7 +44,12 @@ public class request {
 	public void setTime(Date time) {
 		this.time = time;
 	}
-	
+	public char getStatus() {
+		return status;
+	}
+	public void setStatus(char status) {
+		this.status = status;
+	}
 		
 	
 }

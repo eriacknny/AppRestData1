@@ -6,9 +6,10 @@ public class requestDao {
 
 	public boolean registrarRequest(request request) {
 		try {
-			String sql = "insert into request(url,json,name,time) values('" + request.getUrl()
-					+ "','" + request.getJson_request() + "','"
-					+ request.getName() + "','" + request.getTime() + "')";
+			String sql = "insert into request(url,json,name,time,status) values('"
+					+ request.getUrl() + "','" + request.getJson_request()
+					+ "','" + request.getName() + "','" + request.getTime()
+					+ "','" + request.getStatus() + "')";
 			Cdao ocado = new Cdao();
 			if (ocado.ejecuta_sql(sql)) {
 				return true;

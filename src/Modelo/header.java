@@ -6,6 +6,7 @@ public class header {
 	int id_request;
 	String name;
 	String value;
+	char status;
 	
 	public int getId_header() {
 		return id_header;
@@ -30,6 +31,12 @@ public class header {
 	}
 	public void setValue(String value) {
 		this.value = value;
+	}
+	public char getStatus() {
+		return status;
+	}
+	public void setStatus(char status) {
+		this.status = status;
 	}
 	
 	

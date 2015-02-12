@@ -10,6 +10,8 @@ public class response_receved {
 	JSONArray json_response_receved;
 	Date time_response_receved;
 	Float duration;
+	String status_response;
+	char status;
 	
 	public int getId_response_receved() {
 		return id_response_receved;
@@ -40,6 +42,18 @@ public class response_receved {
 	}
 	public void setDuration(Float duration) {
 		this.duration = duration;
+	}
+	public String getStatus_response() {
+		return status_response;
+	}
+	public void setStatus_response(String status_response) {
+		this.status_response = status_response;
+	}
+	public char getStatus() {
+		return status;
+	}
+	public void setStatus(char status) {
+		this.status = status;
 	} 
 	
 	

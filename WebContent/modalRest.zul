@@ -1,0 +1,51 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window border="normal" apply="AppRestData.ModalRestController"
+		width="800px" position="center,center" height="410px" id="window">
+		<borderlayout>
+			<west width="200px" collapsible="true" splittable="true">
+				<listbox id="set_status" rows="20">
+					<listhead>
+						<listheader label="Status" align="center"></listheader>
+					</listhead>
+				</listbox>
+			</west>
+			<center>
+				<groupbox mold="3d" height="400px">
+					<listbox>
+						<listhead>
+							<listheader label="Request"></listheader>
+						</listhead>
+						<listitem selected="false">
+							<listcell id="listcell_request"
+								height="135px">
+							</listcell>
+						</listitem>
+					</listbox>
+					<listbox>
+						<listhead>
+							<listheader label="Response"></listheader>
+						</listhead>
+						<listitem selected="false">
+							<listcell id="listcell_response"
+								height="135px">
+							</listcell>
+						</listitem>
+					</listbox>
+					<listbox>
+						<listitem>
+							<listcell>
+								<button id="button_run" label="Run"></button>
+								<button id="button_save" label="Save"></button>
+								<button id="button_exist"
+									label="Exit">
+								</button>
+							</listcell>
+						</listitem>
+					</listbox>
+				</groupbox>
+			</center>
+		</borderlayout>
+
+	</window>
+</zk>

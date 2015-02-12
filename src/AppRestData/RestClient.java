@@ -30,7 +30,7 @@ public class RestClient {
 		return listJson;
 	}
 
-	public void post(JSONArray listJson) {
+	public void post(JSONArray listJson, ArrayList<Integer> listStatus, ArrayList<String> listResponse) {
 		final String targetURL = "http://certificacion.educatablet.com:9090/WSUser.svc/Login";
 		try {
 			
@@ -60,6 +60,8 @@ public class RestClient {
 							br.close();
 						System.out.println(httpResult + " "+ httpConnection.getResponseMessage());
 						System.out.println(sb.toString());
+						listStatus.add(httpResult);
+						listResponse.add(sb.toString());
 					
 						
 				
@@ -71,7 +73,9 @@ public class RestClient {
 							}
 							br.close();
 						System.out.println(httpResult + " "+ httpConnection.getResponseMessage());
-						System.out.println(sb.toString());		
+						System.out.println(sb.toString());	
+						listStatus.add(httpResult);
+						listResponse.add(sb.toString());
 						
 					}
 				

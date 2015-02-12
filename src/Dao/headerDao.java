@@ -7,12 +7,12 @@ public class headerDao {
 	public boolean registrarHeader(header header, request request) {
 		try {
 
-			String sql = "insert into header(id_request,name,value) values((select id from request where name = '"
+			String sql = "insert into header(id_request,name,value,status) values((select id from request where name = '"
 					+ request.getName()
 					+ "'),'"
 					+ header.getName()
 					+ "','"
-					+ header.getValue() + "')";
+					+ header.getValue() + "','" + header.getStatus() + "')";
 			Cdao ocado = new Cdao();
 			if (ocado.ejecuta_sql(sql)) {
 				return true;

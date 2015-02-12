@@ -15,6 +15,7 @@ import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.zhtml.Button;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.DropEvent;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
@@ -36,6 +37,7 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Window;
 
 import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
@@ -51,6 +53,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	private Listbox setData;
 	@Wire
 	private Listbox set_headers;
+	@Wire
+	private Listbox set_response_expected;
 	@Wire
 	private Button add_item;
 	@Wire
@@ -99,6 +103,18 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	private Textbox text_url;
 	@Wire
 	private Textbox text_nameService;
+	@Wire
+	private Textbox text_name_response;
+	@Wire
+	private Textbox text_json_response;
+	@Wire
+	private Button add_item_response;
+	@Wire
+	private Button detele_item_response;
+	
+	//------------------------------------------------------------
+
+	
 
 	// Metodo para bloquear el campo longitud que el caso de que el tipo de
 	// valor no amerite longitud
@@ -154,20 +170,6 @@ public class AppRestDataController extends SelectorComposer<Component> {
 
 	}
 
-	@Listen("onClick = #tab_json ")
-	public void heightTabbox() {
-		tabbox.setHeight("250px");
-	}
-
-	@Listen("onClick = #tab_csv ")
-	public void heightTabbox1() {
-		tabbox.setHeight("100px");
-	}
-
-	@Listen("onClick = #tab_exel ")
-	public void heightTabbox2() {
-		tabbox.setHeight("100px");
-	}
 
 	@Listen("onClick = #add_item_header ")
 	public void addItemHeader() {
@@ -193,6 +195,32 @@ public class AppRestDataController extends SelectorComposer<Component> {
 			alert("Please select an item first!");
 		}
 	}
+	
+	@Listen("onClick = #add_item_response")
+	public void addItemResponse(){
+		Listitem item = new Listitem();
+		Listcell cellresponse = new Listcell(text_name_response.getValue());
+		Listcell celljson = new Listcell(text_json_response.getValue());
+		item.appendChild(cellresponse);
+		item.appendChild(celljson);
+		set_response_expected.appendChild(item);
+		set_response_expected.setSelectedItem(item);
+	}
+	
+	@Listen("onClick = #detele_item_response")
+	public void deleteItemResponse(){
+		int index = set_response_expected.getSelectedIndex();
+		System.out.println(index);
+		if (index >= 0) {
+			// remove the selected item
+			set_response_expected.removeItemAt(index);
+		} else {
+			// a easy way to show a message to user
+			alert("Please select an item first!");
+		}
+	}
+	
+	
 
 	// Metodo para agragar una fila a la tabla
 	@Listen("onClick = #add_item")
@@ -301,17 +329,17 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		ArrayList<Boolean> listRequired = new ArrayList<>();
 		ArrayList<String> listHeader = new ArrayList<>();
 		ArrayList<String> listValueHeader = new ArrayList<>();
-		
-		
+		ArrayList<Integer> listStatus = new ArrayList<>();
+		ArrayList<String> listResponse = new ArrayList<>();
 		List<Listitem> lista = setData.getItems();
 		List<Listitem> lista1 = set_headers.getItems();
 
 		ordenarParametros(listString, lista, listValuesValidate, listLengthMin,listLengthMax, listRequired, listCampo);
 		obtenerHeaders(listHeader, listValueHeader, lista1);
-		int lineas = Integer.parseInt(text_row.getValue());
-		int lineas_min = (3 + listString.size());
-
-		int row = setData.getItemCount();
+		
+		//int lineas = Integer.parseInt(text_row.getValue());
+		//int lineas_min = (3 + listString.size());
+		//int row = setData.getItemCount();
 
 		
 		 TestCase caso = new TestCase(); 
@@ -319,7 +347,7 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		 System.out.println(listCaso); 
 		 RestClient rest = new RestClient(); 
 		 JSONArray listJson = rest.gerenateJson(listCaso,listCampo); 
-		 //rest.post(listJson);
+		 rest.post(listJson, listStatus, listResponse);
 		 
 		 Date date= new Date(); 
 		 Timestamp time = new Timestamp(date.getTime());
@@ -328,6 +356,7 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		 request.setJson_request(listJson);
 		 request.setName(text_nameService.getValue());
 		 request.setTime(time);
+		 request.setStatus('A');
 		 
 		 requestDao requestDao = new requestDao();
 		 Boolean registro = null;
@@ -338,16 +367,17 @@ public class AppRestDataController extends SelectorComposer<Component> {
 			 header header = new header();
 			 header.setName(listHeader.get(h));
 			 header.setValue(listValueHeader.get(h));
+			 header.setStatus('A');
 			 headerDao headerDao = new headerDao();
 			 Boolean registroH = headerDao.registrarHeader(header, request);
 			 System.out.println("Registro header:" + registroH);
 		 }
-		 
 		
 		 //GenerateTXT(row, lineas, listCaso);
-		 
 
 	}
+	
+	
 
 	// Método para encontrar el orden de los parametros indicados
 	public void ordenarParametros(ArrayList<String> listString,
@@ -432,7 +462,6 @@ public class AppRestDataController extends SelectorComposer<Component> {
 			List<Component> com = currentList.getChildren();
 			for (Component currentComp : com) {
 				Listcell lc = (Listcell) currentComp;
-				String cadena = "";
 				if (lc.getColumnIndex() == 0) {
 					listHeader.add(lc.getLabel());
 				}
@@ -443,7 +472,21 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		}
 	}
 	
-
+	public void obtenerResponses(ArrayList<String> listNameResponse, ArrayList<String> listJsonResponse, List<Listitem> lista2){
+		for (Listitem currentList : lista2) {
+			List<Component> com = currentList.getChildren();
+			for (Component currentComp : com) {
+				Listcell lc = (Listcell) currentComp;
+				if (lc.getColumnIndex() == 0) {
+					listNameResponse.add(lc.getLabel());
+				}
+				if(lc.getColumnIndex()==1){
+					listNameResponse.add(lc.getLabel());
+				}
+			}
+		}
+	}
+	
 	// Metodo para crear el un archivo TXT
 	public void generateTXT(int row, int lineas, ArrayList<String> listCaso) {
 		PrintWriter salida = null;
@@ -492,4 +535,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		text_value.setValue("");
 	}
 
+	
+
+	
+	
 }
