@@ -7,11 +7,13 @@ public class response_receved {
 	
 	int id_response_receved;
 	int id_request;
-	JSONArray json_response_receved;
-	Date time_response_receved;
-	Float duration;
+	String json_request;
+	String json_response_receved;
+	int duration;
 	String status_response;
+	String message;
 	char status;
+	
 	
 	public int getId_response_receved() {
 		return id_response_receved;
@@ -25,24 +27,7 @@ public class response_receved {
 	public void setId_request(int id_request) {
 		this.id_request = id_request;
 	}
-	public JSONArray getJson_response_receved() {
-		return json_response_receved;
-	}
-	public void setJson_response_receved(JSONArray json_response_receved) {
-		this.json_response_receved = json_response_receved;
-	}
-	public Date getTime_response_receved() {
-		return time_response_receved;
-	}
-	public void setTime_response_receved(Date time_response_receved) {
-		this.time_response_receved = time_response_receved;
-	}
-	public Float getDuration() {
-		return duration;
-	}
-	public void setDuration(Float duration) {
-		this.duration = duration;
-	}
+
 	public String getStatus_response() {
 		return status_response;
 	}
@@ -54,7 +39,32 @@ public class response_receved {
 	}
 	public void setStatus(char status) {
 		this.status = status;
-	} 
+	}
+	public String getJson_response_receved() {
+		return json_response_receved;
+	}
+	public void setJson_response_receved(String json_response_receved) {
+		this.json_response_receved = json_response_receved;
+	}
+	public int getDuration() {
+		return duration;
+	}
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	public String getJson_request() {
+		return json_request;
+	}
+	public void setJson_request(String json_request) {
+		this.json_request = json_request;
+	}
+	
 	
 	
 }

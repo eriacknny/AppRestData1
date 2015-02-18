@@ -44,8 +44,12 @@ import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 import AppRestData.TestCase;
 import Dao.headerDao;
 import Dao.requestDao;
+import Dao.response_expectedDao;
+import Dao.response_recevedDao;
 import Modelo.header;
 import Modelo.request;
+import Modelo.response_expected;
+import Modelo.response_receved;
 
 public class AppRestDataController extends SelectorComposer<Component> {
 
@@ -61,6 +65,10 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	private Button detete_item;
 	@Wire
 	private Button button_generate;
+	@Wire
+	private Button button_cancel;
+	@Wire
+	private Button button_result;
 	@Wire
 	private Textbox text_delimiter;
 	@Wire
@@ -205,6 +213,7 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		item.appendChild(celljson);
 		set_response_expected.appendChild(item);
 		set_response_expected.setSelectedItem(item);
+		limpiar2();
 	}
 	
 	@Listen("onClick = #detele_item_response")
@@ -316,62 +325,126 @@ public class AppRestDataController extends SelectorComposer<Component> {
 			alert("Please select an item first!");
 		}
 	}
+	
+	@Listen("onClick = #button_cancel")
+	public void Cancel(){
+		limpiar();
+		limpiar1();
+		limpiar2();
+		limpiar3();
+		limpiarListas();
+	}
+	
+	@Listen ("onClick = #button_result")
+	public void Results(){
+		 Window window = (Window)Executions.createComponents("modalRest.zul", null, null);
+	        window.doModal();
+	}
+	
 
 	// Método para generar los casos de prueba
 	@Listen("onClick = #button_generate")
 	public void Generate() {
-		ArrayList<String> listString = new ArrayList<>();
-		ArrayList<String> listValuesValidate = new ArrayList<>();
-		ArrayList<String> listValuesText = new ArrayList<>();
-		ArrayList<String> listCampo = new ArrayList<>();
-		ArrayList<Integer> listLengthMin = new ArrayList();
-		ArrayList<Integer> listLengthMax = new ArrayList<>();
-		ArrayList<Boolean> listRequired = new ArrayList<>();
-		ArrayList<String> listHeader = new ArrayList<>();
-		ArrayList<String> listValueHeader = new ArrayList<>();
-		ArrayList<Integer> listStatus = new ArrayList<>();
-		ArrayList<String> listResponse = new ArrayList<>();
-		List<Listitem> lista = setData.getItems();
-		List<Listitem> lista1 = set_headers.getItems();
-
-		ordenarParametros(listString, lista, listValuesValidate, listLengthMin,listLengthMax, listRequired, listCampo);
-		obtenerHeaders(listHeader, listValueHeader, lista1);
+		Messagebox mensaje = new Messagebox();
+		mensaje.show("Are you sure?", "Question", Messagebox.OK
+				| Messagebox.CANCEL, Messagebox.QUESTION,
+				new EventListener<Event>() {
+					@Override
+					public void onEvent(Event event) throws Exception {
+						if ("onCancel".equals(event.getName())) {
 		
-		//int lineas = Integer.parseInt(text_row.getValue());
-		//int lineas_min = (3 + listString.size());
-		//int row = setData.getItemCount();
+						} else {
+							ArrayList<String> listString = new ArrayList<>();
+							ArrayList<String> listValuesValidate = new ArrayList<>();
+							ArrayList<String> listValuesText = new ArrayList<>();
+							ArrayList<String> listCampo = new ArrayList<>();
+							ArrayList<Integer> listLengthMin = new ArrayList();
+							ArrayList<Integer> listLengthMax = new ArrayList<>();
+							ArrayList<Boolean> listRequired = new ArrayList<>();
+							ArrayList<String> listHeader = new ArrayList<>();
+							ArrayList<String> listValueHeader = new ArrayList<>();
+							ArrayList<Integer> listStatus = new ArrayList<>();
+							ArrayList<String> listResponse = new ArrayList<>();
+							ArrayList<String> listRequestSend = new ArrayList<>();
+							ArrayList<Integer> listTimeConnection = new ArrayList<>();
+							ArrayList<String> listResponseMessage = new ArrayList<>();
+							ArrayList<String> listNameResponse = new ArrayList<>();
+							ArrayList<String> listJsonResponse = new ArrayList<>();
+							List<Listitem> lista = setData.getItems();
+							List<Listitem> lista1 = set_headers.getItems();
+							List<Listitem> lista2 = set_response_expected.getItems();
+							String urlService = text_url.getValue();
+							String nameService = text_value.getValue();
 
+							ordenarParametros(listString, lista, listValuesValidate, listLengthMin,listLengthMax, listRequired, listCampo);
+							obtenerHeaders(listHeader, listValueHeader, lista1);
+							obtenerResponses(listNameResponse, listJsonResponse, lista2);
+							
+							//int lineas = Integer.parseInt(text_row.getValue());
+							//int lineas_min = (3 + listString.size());
+							//int row = setData.getItemCount();
+
+							
+							 TestCase caso = new TestCase(); 
+							 ArrayList<String> listCaso = caso.tupla(listString, listValuesValidate, listLengthMin,listLengthMax); 
+							 System.out.println(listCaso); 
+							 RestClient rest = new RestClient(); 
+							 JSONArray listJson = rest.gerenateJson(listCaso,listCampo); 
+							 rest.post(listJson, listStatus, listResponse, listRequestSend, listTimeConnection, listHeader, listValueHeader,listResponseMessage,urlService,nameService);
+							 
+							 Date date= new Date(); 
+							 Timestamp time = new Timestamp(date.getTime());
+							 request request = new request();
+							 request.setUrl(text_url.getValue());
+							 request.setJson_request(listJson);
+							 request.setName(text_nameService.getValue());
+							 request.setTime(time);
+							 request.setStatus('A');
+							 
+							 requestDao requestDao = new requestDao();
+							 Boolean registro = null;
+							 registro = requestDao.registrarRequest(request);
+							 System.out.println("Registro:" + registro);
+							 
+							 for(int h=0; h<listHeader.size();++h){
+								 header header = new header();
+								 header.setName(listHeader.get(h));
+								 header.setValue(listValueHeader.get(h));
+								 header.setStatus('A');
+								 headerDao headerDao = new headerDao();
+								 Boolean registroH = headerDao.registrarHeader(header, request);
+								 System.out.println("Registro header:" + registroH);
+							 }
+							 for(int r =0; r<listNameResponse.size();++r){
+								 response_expected response_exp = new response_expected();
+								 response_exp.setName(listNameResponse.get(r));
+								 response_exp.setJson_response_expected(listJsonResponse.get(r));
+								 response_exp.setStatus('A');
+								 response_expectedDao response_expDao = new response_expectedDao();
+								 Boolean resgistroRE = response_expDao.registrarResponseExpected(request, response_exp);
+								 System.out.println("Resgistro response_expected:" + resgistroRE);
+							 }
+							 for(int re=0; re<listStatus.size();++re){
+								 response_receved response_rec = new response_receved();
+								 String valor = Integer.toString(listStatus.get(re)); 
+								 response_rec.setStatus_response(valor);
+								 response_rec.setMessage(listResponseMessage.get(re));
+								 response_rec.setJson_request(listRequestSend.get(re));
+								 response_rec.setJson_response_receved(listResponse.get(re));
+								 response_rec.setDuration(listTimeConnection.get(re));
+								 response_rec.setStatus('A');
+								 response_recevedDao response_recDao = new response_recevedDao();
+								 Boolean registroRR = response_recDao.registrarResponseReceved(request, response_rec);
+								 System.out.println("Registro response_receved:" +registroRR);
+							 }
+							 
+							 limpiarListas();
+						}
+					}
+				});
 		
-		 TestCase caso = new TestCase(); 
-		 ArrayList<String> listCaso = caso.tupla(listString, listValuesValidate, listLengthMin,listLengthMax); 
-		 System.out.println(listCaso); 
-		 RestClient rest = new RestClient(); 
-		 JSONArray listJson = rest.gerenateJson(listCaso,listCampo); 
-		 rest.post(listJson, listStatus, listResponse);
-		 
-		 Date date= new Date(); 
-		 Timestamp time = new Timestamp(date.getTime());
-		 request request = new request();
-		 request.setUrl(text_url.getValue());
-		 request.setJson_request(listJson);
-		 request.setName(text_nameService.getValue());
-		 request.setTime(time);
-		 request.setStatus('A');
-		 
-		 requestDao requestDao = new requestDao();
-		 Boolean registro = null;
-		 registro = requestDao.registrarRequest(request);
-		 System.out.println("Registro:" + registro);
-		 
-		 for(int h=0; h<listHeader.size();++h){
-			 header header = new header();
-			 header.setName(listHeader.get(h));
-			 header.setValue(listValueHeader.get(h));
-			 header.setStatus('A');
-			 headerDao headerDao = new headerDao();
-			 Boolean registroH = headerDao.registrarHeader(header, request);
-			 System.out.println("Registro header:" + registroH);
-		 }
+		
+		
 		
 		 //GenerateTXT(row, lineas, listCaso);
 
@@ -481,7 +554,7 @@ public class AppRestDataController extends SelectorComposer<Component> {
 					listNameResponse.add(lc.getLabel());
 				}
 				if(lc.getColumnIndex()==1){
-					listNameResponse.add(lc.getLabel());
+					listJsonResponse.add(lc.getLabel());
 				}
 			}
 		}
@@ -534,7 +607,38 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		text_header.setValue("");
 		text_value.setValue("");
 	}
+	
+	public void limpiar2(){
+		text_name_response.setValue("");
+		text_json_response.setValue("");
+	}
+	public void limpiar3(){
+		text_url.setValue("");
+		text_nameService.setValue("");
+	}
 
+	public void limpiarListas(){
+		int index = set_response_expected.getSelectedIndex();
+		int index1 = setData.getSelectedIndex();
+		int index2 = set_headers.getSelectedIndex();
+		
+		System.out.println(index);
+		if (index >= 0) {
+			for(int i=0; i<index;++i){
+				set_response_expected.removeItemAt(i);
+			}
+		}
+		if(index1 >=0){
+			for(int i1=0; i1<index1;++i1){
+				setData.removeItemAt(i1);
+			}
+		}
+		if(index2 >=0){
+			for(int i2=0; i2<index2;++i2){
+				set_headers.removeItemAt(i2);
+			}
+		}
+	}
 	
 
 	

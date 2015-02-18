@@ -1,5 +1,6 @@
 package AppRestData;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import org.zkoss.json.JSONArray;
@@ -14,7 +15,11 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
+
+import Dao.Cdao;
+import Dao.response_recevedDao;
 
 import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
@@ -26,30 +31,57 @@ public class ModalRestController extends SelectorComposer<Component> {
 	@Wire 
 	private Listcell listcell_response;
 	@Wire
-	private Button button_run;
-	@Wire
-	private Button button_save;
+	private Button button_load;
 	@Wire
 	private Button button_exist;
 	@Wire
 	private Window window;
-
-	private ArrayList<Integer> listStatusRequest = new ArrayList<>();;
+	@Wire
+	private Textbox text_request;
+	@Wire
+	private Textbox text_response;
+	
+	ArrayList<String> listStatus = new ArrayList<>();
+	ArrayList<String> listMessage = new ArrayList<>();
+	ArrayList<String> listJsonR = new ArrayList<>();
+	ArrayList<String> listJsonSend = new ArrayList<>();
 	
 	public void show(){
 		window = (Window)Executions.createComponents("modalRest.zul",null,null);
 		window.doModal();
 	}
 	
-	@Listen("onClick = #button_run")
+	@Listen("onClick = #button_load")
 	public void run() {
-		System.out.println("status:" +listStatusRequest);
-		for(int i=0; i<30;++i){
+	
+		response_recevedDao rrDao = new response_recevedDao();
+		rrDao.obtenerResponseReceved(listStatus,listMessage, listJsonR,listJsonSend);
+		
+		for(int i=0; i<listStatus.size();++i){
 			Listitem item = new Listitem();
-			Listcell cellStatus = new Listcell("request");
-			item.appendChild(cellStatus);
-			set_status.appendChild(item);
+			Listcell cellStatus = new Listcell(listStatus.get(i) + " " + listMessage.get(i));
+			if(listStatus.get(i).equals("200"))
+				item.setStyle("background-color: #9DD856");
+			else
+				item.setStyle("background-color: #DB2464");
+			
+				item.appendChild(cellStatus);
+				set_status.appendChild(item);
 		}
+		System.out.println(listStatus);
+		System.out.println(listJsonR);
+		
+	}
+	
+	@Listen("onSelect = #set_status")
+	public void selectStatus(){
+		text_request.setValue("");
+		text_response.setValue("");
+		int index = set_status.getSelectedIndex();
+		System.out.println(index);
+		System.out.println(listJsonR.get(index));
+		text_request.setValue(listJsonSend.get(index));
+		text_response.setValue(listJsonR.get(index));
 	}
 	
 	@Listen("onClick = #button_exist")
@@ -57,12 +89,5 @@ public class ModalRestController extends SelectorComposer<Component> {
 		window.detach();
 	}
 	
-	@Listen("onClick = #button_save")
-	public void save() {
-		
-	}
-	
-	public void cargarRequest(JSONArray listJson, ArrayList<Integer> listStatus, ArrayList<String> listResponse){
-		listStatusRequest = listStatus;
-	}
+
 }

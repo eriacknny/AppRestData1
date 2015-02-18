@@ -6,7 +6,7 @@ public class response_expected {
 	
 	int id_request_expected;
 	int id_request;
-	JSONArray json_response_expected;
+	String json_response_expected;
 	String name;
 	char status;
 	
@@ -21,11 +21,11 @@ public class response_expected {
 	}
 	public void setId_request(int id_request) {
 		this.id_request = id_request;
-	}
-	public JSONArray getJson_response_expected() {
+	}	
+	public String getJson_response_expected() {
 		return json_response_expected;
 	}
-	public void setJson_response_expected(JSONArray json_response_expected) {
+	public void setJson_response_expected(String json_response_expected) {
 		this.json_response_expected = json_response_expected;
 	}
 	public String getName() {
@@ -39,8 +39,5 @@ public class response_expected {
 	}
 	public void setStatus(char status) {
 		this.status = status;
-	}
-
-	
-		
+	}	
 }

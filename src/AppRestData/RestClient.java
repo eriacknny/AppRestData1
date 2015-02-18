@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -30,64 +31,76 @@ public class RestClient {
 		return listJson;
 	}
 
-	public void post(JSONArray listJson, ArrayList<Integer> listStatus, ArrayList<String> listResponse) {
-		final String targetURL = "http://certificacion.educatablet.com:9090/WSUser.svc/Login";
+	public void post(JSONArray listJson, ArrayList<Integer> listStatus,
+			ArrayList<String> listResponse, ArrayList<String> listRequestSend,
+			ArrayList<Integer> listTimeConnection,
+			ArrayList<String> listHeader, ArrayList<String> listValueHeader, ArrayList<String> listResponseMessage,
+			String urlService, String nameService) {
+
+		final String targetURL = urlService;
 		try {
-			
+
 			for (int i = 0; i < listJson.size(); ++i) {
 				URL targetUrl = new URL(targetURL);
 				HttpURLConnection httpConnection = (HttpURLConnection) targetUrl.openConnection();
 				httpConnection.setDoOutput(true);
 				httpConnection.setDoInput(true);
 				httpConnection.setRequestMethod("POST");
-				httpConnection.setRequestProperty("Content-Type","application/json");
-				httpConnection.setRequestProperty("X-Auth-device-token","mszrkhB3FUCD4ZP+2flTme6HJ2Os4dZz4hBAutg5DN/e7s4bdmDP7g==");
-				httpConnection.setRequestProperty("X-Auth-key","zD0sXXcNEMeqZRvIOkfc6IM0qxesfrDO");
+				
+				for (int p = 0; p < listHeader.size(); ++p) {
+					httpConnection.setRequestProperty(listHeader.get(p),listValueHeader.get(p));
+				}
 
 				OutputStreamWriter wr = new OutputStreamWriter(httpConnection.getOutputStream());
-						
 				wr.write(listJson.get(i).toString());
+				listRequestSend.add(listJson.get(i).toString());
 				wr.flush();
 				int httpResult = httpConnection.getResponseCode();
+				long time = httpConnection.getDate();
+				Integer timeConnection = (int) (long) time;
 				StringBuilder sb = new StringBuilder();
-				
-					if (httpResult == HttpURLConnection.HTTP_OK) {
-						BufferedReader br= new BufferedReader(new InputStreamReader(httpConnection.getInputStream(), "utf-8"));
-						String line = null;
-							while ((line = br.readLine()) != null) {
-								sb.append(line + "/n");
-							}
-							br.close();
-						System.out.println(httpResult + " "+ httpConnection.getResponseMessage());
-						System.out.println(sb.toString());
-						listStatus.add(httpResult);
-						listResponse.add(sb.toString());
-					
-						
-				
-					} else {
-						BufferedReader br= new BufferedReader(new InputStreamReader(httpConnection.getInputStream(), "utf-8"));
-						String line = null;
-							while ((line = br.readLine()) != null) {
-								sb.append(line + "/n");
-							}
-							br.close();
-						System.out.println(httpResult + " "+ httpConnection.getResponseMessage());
-						System.out.println(sb.toString());	
-						listStatus.add(httpResult);
-						listResponse.add(sb.toString());
-						
+
+				if (httpResult == HttpURLConnection.HTTP_OK) {
+					BufferedReader br = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(), "utf-8"));
+					String line = null;
+					while ((line = br.readLine()) != null) {
+						sb.append(line + "/n");
 					}
-				
-			}		
+					br.close();
+					System.out.println(httpResult + " "+ httpConnection.getResponseMessage());
+					System.out.println(sb.toString());
+					System.out.println(timeConnection);
+					listStatus.add(httpResult);
+					listResponse.add(sb.toString());
+					listTimeConnection.add(timeConnection);
+					listResponseMessage.add(httpConnection.getResponseMessage());
+
+				} else {
+					BufferedReader br = new BufferedReader(
+							new InputStreamReader(httpConnection.getInputStream(), "utf-8"));
+					String line = null;
+					while ((line = br.readLine()) != null) {
+						sb.append(line + "/n");
+					}
+					br.close();
+					System.out.println(httpResult + " "	+ httpConnection.getResponseMessage());
+					System.out.println(sb.toString());
+					System.out.println(timeConnection);
+					listStatus.add(httpResult);
+					listResponse.add(sb.toString());
+					listTimeConnection.add(timeConnection);
+					listResponseMessage.add(httpConnection.getResponseMessage());
+
+				}
+
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-	}	
-	
-	
+	}
+
 	public void get() {
 		final String targetURL = "";
 		try {
@@ -106,11 +119,13 @@ public class RestClient {
 								+ httpConnection.getResponseCode());
 			}
 
-			BufferedReader responseBuffer = new BufferedReader(new InputStreamReader((httpConnection.getInputStream())));
+			BufferedReader responseBuffer = new BufferedReader(
+					new InputStreamReader((httpConnection.getInputStream())));
 
 			String output;
 
-			System.out.println(httpResult + " "+ httpConnection.getResponseMessage());
+			System.out.println(httpResult + " "
+					+ httpConnection.getResponseMessage());
 
 			while ((output = responseBuffer.readLine()) != null) {
 				System.out.println(output);
@@ -129,5 +144,5 @@ public class RestClient {
 		}
 
 	}
-	
+
 }

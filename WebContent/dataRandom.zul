@@ -2,7 +2,75 @@
 <zk>
 	<window border="normal" height="100%" zclass="z-window-popup"
 		apply="AppRestData.AppRestDataController">
+
 		<groupbox mold="3d">
+			<caption label="Headers"></caption>
+			<tabbox id="tabbox" height="280px">
+				<tabs id="tabs">
+					<tab id="tab_json" label="JSON" />
+
+				</tabs>
+				<tabpanels>
+					<tabpanel>
+						<groupbox>
+							<listbox>
+								<listitem>
+									<listcell>
+										<label value="Url:"></label>
+										<textbox id="text_url"
+											width="400px">
+										</textbox>
+									</listcell>
+									<listcell>
+										<label value="Name:"></label>
+										<textbox id="text_nameService"
+											width="400px">
+										</textbox>
+									</listcell>
+								</listitem>
+							</listbox>
+						</groupbox>
+						<groupbox>
+							<listbox id="set_headers" rows="3">
+								<listhead>
+									<listheader label="Header"></listheader>
+									<listheader label="Value"></listheader>
+								</listhead>
+							</listbox>
+						</groupbox>
+						<groupbox>
+							<listbox>
+								<listitem>
+									<listcell>
+										<label value="Header"></label>
+										<textbox id="text_header"
+											width="250px">
+										</textbox>
+									</listcell>
+									<listcell>
+										<label value="Value:"></label>
+										<textbox id="text_value"
+											width="250px">
+										</textbox>
+									</listcell>
+									<listcell>
+										<button id="add_item_header"
+											label="Add Header">
+										</button>
+										<button id="detele_item_header"
+											label="Delete Header">
+										</button>
+									</listcell>
+								</listitem>
+							</listbox>
+						</groupbox>
+					</tabpanel>
+				</tabpanels>
+			</tabbox>
+		</groupbox>
+		<separator></separator>
+		<separator></separator>
+				<groupbox mold="3d">
 			<caption label="Parameters"></caption>
 			<listbox id="setData" rows="4">
 				<listhead>
@@ -114,73 +182,6 @@
 		<separator />
 		<separator />
 		<groupbox mold="3d">
-			<caption label="Headers"></caption>
-			<tabbox id="tabbox" height="280px">
-				<tabs id="tabs">
-					<tab id="tab_json" label="JSON" />
-
-				</tabs>
-				<tabpanels>
-					<tabpanel>
-						<groupbox>
-							<listbox>
-								<listitem>
-									<listcell>
-										<label value="Url:"></label>
-										<textbox id="text_url"
-											width="400px">
-										</textbox>
-									</listcell>
-									<listcell>
-										<label value="Name:"></label>
-										<textbox id="text_nameService"
-											width="400px">
-										</textbox>
-									</listcell>
-								</listitem>
-							</listbox>
-						</groupbox>
-						<groupbox>
-							<listbox id="set_headers" rows="3">
-								<listhead>
-									<listheader label="Header"></listheader>
-									<listheader label="Value"></listheader>
-								</listhead>
-							</listbox>
-						</groupbox>
-						<groupbox>
-							<listbox>
-								<listitem>
-									<listcell>
-										<label value="Header"></label>
-										<textbox id="text_header"
-											width="250px">
-										</textbox>
-									</listcell>
-									<listcell>
-										<label value="Value:"></label>
-										<textbox id="text_value"
-											width="250px">
-										</textbox>
-									</listcell>
-									<listcell>
-										<button id="add_item_header"
-											label="Add Header">
-										</button>
-										<button id="detele_item_header"
-											label="Delete Header">
-										</button>
-									</listcell>
-								</listitem>
-							</listbox>
-						</groupbox>
-					</tabpanel>
-				</tabpanels>
-			</tabbox>
-		</groupbox>
-		<separator></separator>
-		<separator></separator>
-		<groupbox mold="3d">
 			<caption label="Expected Response"></caption>
 			<listbox id="set_response_expected" rows="3">
 				<listhead>
@@ -217,8 +218,9 @@
 			</listbox>
 		</groupbox>
 		<groupbox>
-			<button id="button_generate" label="Save"></button>
-			<button id="Button_cancel" label="Cancel"></button>
+			<button id="button_generate" label="Run"></button>
+			<button id="button_cancel" label="Cancel"></button>
+			<button id="button_result" label="Show Results"></button>
 		</groupbox>
 
 	</window>
