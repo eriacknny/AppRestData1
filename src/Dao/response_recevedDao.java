@@ -41,18 +41,33 @@ public class response_recevedDao {
 	}
 
 	public void obtenerResponseReceved(ArrayList<String> listStatus,
-			ArrayList<String> listMessage, ArrayList<String> listJsonR, ArrayList<String> listJsonSend) {
-		String sql = "select rr.status_response, rr.message, rr.json,rr.json_send from request r join response_receved rr on rr.id_request = r.id where r.name = 'GetCountries'";
+			ArrayList<String> listMessage, ArrayList<String> listJsonR,
+			ArrayList<String> listJsonSend,ArrayList<String> listname,ArrayList<String> listurl) {
+		int id=0;
 		Cdao dao = new Cdao();
-		ResultSet resultado = dao.retorna_sql(sql);
+		String sql ="select max(id) from request";
+		ResultSet resultId = dao.retorna_sql(sql);
+		try {
+		  while(resultId.next())
+			id = resultId.getInt("max");
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		System.out.println("id:" + id);
+		String sql1 = "select r.url, r.name, rr.status_response, rr.message, rr.json,rr.json_send from request r join response_receved rr on rr.id_request = r.id where r.id="+id+"";
+	
+		ResultSet resultado = dao.retorna_sql(sql1);
 
 		try {
+			
 			while (resultado.next()) {
+				listurl.add(resultado.getString("url"));
+				listname.add(resultado.getString("name"));
 				listStatus.add(resultado.getString("status_response"));
 				listMessage.add(resultado.getString("message"));
 				listJsonR.add(resultado.getString("json"));
 				listJsonSend.add(resultado.getString("json_send"));
-				
+
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

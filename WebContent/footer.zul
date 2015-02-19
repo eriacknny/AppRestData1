@@ -1,4 +1,5 @@
 <div hflex="1" vflex="1" sclass="footer">
     <vbox hflex="1" vflex="1" align="center">
+    	<label value="© ETC Group - 2015 0.0.1"></label>
     </vbox>
 </div>

@@ -19,6 +19,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.DropEvent;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.ext.Disable;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -345,6 +346,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	// Método para generar los casos de prueba
 	@Listen("onClick = #button_generate")
 	public void Generate() {
+		
+		
 		Messagebox mensaje = new Messagebox();
 		mensaje.show("Are you sure?", "Question", Messagebox.OK
 				| Messagebox.CANCEL, Messagebox.QUESTION,
@@ -401,56 +404,62 @@ public class AppRestDataController extends SelectorComposer<Component> {
 							 request.setTime(time);
 							 request.setStatus('A');
 							 
+							
 							 requestDao requestDao = new requestDao();
-							 Boolean registro = null;
-							 registro = requestDao.registrarRequest(request);
-							 System.out.println("Registro:" + registro);
-							 
-							 for(int h=0; h<listHeader.size();++h){
-								 header header = new header();
-								 header.setName(listHeader.get(h));
-								 header.setValue(listValueHeader.get(h));
-								 header.setStatus('A');
-								 headerDao headerDao = new headerDao();
-								 Boolean registroH = headerDao.registrarHeader(header, request);
-								 System.out.println("Registro header:" + registroH);
+							 boolean service_name = requestDao.obtenerRequest(request);
+							 if(service_name == false){
+								 Boolean registro = null;
+								 registro = requestDao.registrarRequest(request);
+								 System.out.println("Registro:" + registro);
+								 
+								 for(int h=0; h<listHeader.size();++h){
+									 header header = new header();
+									 header.setName(listHeader.get(h));
+									 header.setValue(listValueHeader.get(h));
+									 header.setStatus('A');
+									 headerDao headerDao = new headerDao();
+									 Boolean registroH = headerDao.registrarHeader(header, request);
+									 System.out.println("Registro header:" + registroH);
+								 }
+								 for(int r =0; r<listNameResponse.size();++r){
+									 response_expected response_exp = new response_expected();
+									 response_exp.setName(listNameResponse.get(r));
+									 response_exp.setJson_response_expected(listJsonResponse.get(r));
+									 response_exp.setStatus('A');
+									 response_expectedDao response_expDao = new response_expectedDao();
+									 Boolean resgistroRE = response_expDao.registrarResponseExpected(request, response_exp);
+									 System.out.println("Resgistro response_expected:" + resgistroRE);
+								 }
+								 for(int re=0; re<listStatus.size();++re){
+									 response_receved response_rec = new response_receved();
+									 String valor = Integer.toString(listStatus.get(re)); 
+									 response_rec.setStatus_response(valor);
+									 response_rec.setMessage(listResponseMessage.get(re));
+									 response_rec.setJson_request(listRequestSend.get(re));
+									 response_rec.setJson_response_receved(listResponse.get(re));
+									 response_rec.setDuration(listTimeConnection.get(re));
+									 response_rec.setStatus('A');
+									 response_recevedDao response_recDao = new response_recevedDao();
+									 Boolean registroRR = response_recDao.registrarResponseReceved(request, response_rec);
+									 System.out.println("Registro response_receved:" +registroRR);
+								 }
+								 //limpiarListas();
+							 }else{
+								 Messagebox mensaje1 = new Messagebox();
+								 mensaje1.show("This name has been used, please specify!");
 							 }
-							 for(int r =0; r<listNameResponse.size();++r){
-								 response_expected response_exp = new response_expected();
-								 response_exp.setName(listNameResponse.get(r));
-								 response_exp.setJson_response_expected(listJsonResponse.get(r));
-								 response_exp.setStatus('A');
-								 response_expectedDao response_expDao = new response_expectedDao();
-								 Boolean resgistroRE = response_expDao.registrarResponseExpected(request, response_exp);
-								 System.out.println("Resgistro response_expected:" + resgistroRE);
-							 }
-							 for(int re=0; re<listStatus.size();++re){
-								 response_receved response_rec = new response_receved();
-								 String valor = Integer.toString(listStatus.get(re)); 
-								 response_rec.setStatus_response(valor);
-								 response_rec.setMessage(listResponseMessage.get(re));
-								 response_rec.setJson_request(listRequestSend.get(re));
-								 response_rec.setJson_response_receved(listResponse.get(re));
-								 response_rec.setDuration(listTimeConnection.get(re));
-								 response_rec.setStatus('A');
-								 response_recevedDao response_recDao = new response_recevedDao();
-								 Boolean registroRR = response_recDao.registrarResponseReceved(request, response_rec);
-								 System.out.println("Registro response_receved:" +registroRR);
-							 }
-							 
-							 limpiarListas();
+						
 						}
 					}
 				});
-		
-		
-		
 		
 		 //GenerateTXT(row, lineas, listCaso);
 
 	}
 	
-	
+	public void habilitarButton(){
+		
+	}
 
 	// Método para encontrar el orden de los parametros indicados
 	public void ordenarParametros(ArrayList<String> listString,

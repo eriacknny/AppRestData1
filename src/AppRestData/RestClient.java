@@ -64,7 +64,7 @@ public class RestClient {
 					BufferedReader br = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(), "utf-8"));
 					String line = null;
 					while ((line = br.readLine()) != null) {
-						sb.append(line + "/n");
+						sb.append(line);
 					}
 					br.close();
 					System.out.println(httpResult + " "+ httpConnection.getResponseMessage());
@@ -80,7 +80,7 @@ public class RestClient {
 							new InputStreamReader(httpConnection.getInputStream(), "utf-8"));
 					String line = null;
 					while ((line = br.readLine()) != null) {
-						sb.append(line + "/n");
+						sb.append(line);
 					}
 					br.close();
 					System.out.println(httpResult + " "	+ httpConnection.getResponseMessage());

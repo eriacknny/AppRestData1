@@ -40,36 +40,48 @@ public class ModalRestController extends SelectorComposer<Component> {
 	private Textbox text_request;
 	@Wire
 	private Textbox text_response;
+	@Wire
+	private Label labelUrl;
+	@Wire
+	private Label labelName;
 	
 	ArrayList<String> listStatus = new ArrayList<>();
 	ArrayList<String> listMessage = new ArrayList<>();
 	ArrayList<String> listJsonR = new ArrayList<>();
 	ArrayList<String> listJsonSend = new ArrayList<>();
+	ArrayList<String> listname = new ArrayList<>();
+	ArrayList<String> listurl = new ArrayList<>();
 	
+	
+
 	public void show(){
 		window = (Window)Executions.createComponents("modalRest.zul",null,null);
 		window.doModal();
 	}
 	
 	@Listen("onClick = #button_load")
-	public void run() {
+	public void load() {
 	
 		response_recevedDao rrDao = new response_recevedDao();
-		rrDao.obtenerResponseReceved(listStatus,listMessage, listJsonR,listJsonSend);
+		rrDao.obtenerResponseReceved(listStatus,listMessage, listJsonR,listJsonSend,listname,listurl);
+		labelUrl.setValue(listurl.get(0));
+		labelName.setValue(listname.get(0));
 		
+	
 		for(int i=0; i<listStatus.size();++i){
 			Listitem item = new Listitem();
 			Listcell cellStatus = new Listcell(listStatus.get(i) + " " + listMessage.get(i));
 			if(listStatus.get(i).equals("200"))
-				item.setStyle("background-color: #9DD856");
+				item.setStyle("background-color: #c3ffb1");
 			else
-				item.setStyle("background-color: #DB2464");
+				item.setStyle("background-color: #ffeac2");
 			
 				item.appendChild(cellStatus);
 				set_status.appendChild(item);
 		}
 		System.out.println(listStatus);
 		System.out.println(listJsonR);
+		
 		
 	}
 	

@@ -1,5 +1,7 @@
 package Dao;
 
+import java.sql.ResultSet;
+
 import Modelo.request;
 
 public class requestDao {
@@ -20,6 +22,26 @@ public class requestDao {
 			System.out.println("" + ex.getStackTrace());
 			return false;
 		}
+	}
+	
+	public Boolean obtenerRequest(request request){
+		
+		String sql = "select id from request where name ='"+request.getName()+"'";
+		Cdao ocado = new Cdao();
+		int row=0;
+		ResultSet resultado = ocado.retorna_sql(sql);
+		try {
+			while(resultado.next())
+				row = resultado.getRow();
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		if(row !=0)
+			return true;
+		else
+			return false;
+			
 	}
 	
 	

@@ -2,10 +2,7 @@
     <hbox hflex="1" vflex="1" align="center">
         <image src="/imgs/educatablet_header.png"/>
         <div width="400px">
-            <label value="Application Name" sclass="banner-head" />
+            <label value="WS Test Tool" sclass="banner-head" style="font-weight: bold;"/>
         </div>
-        <hbox hflex="1" vflex="1" pack="end" align="end">
-            Anonymous
-        </hbox>
     </hbox>
 </div>
