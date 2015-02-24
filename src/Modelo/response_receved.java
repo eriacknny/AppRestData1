@@ -12,6 +12,7 @@ public class response_receved {
 	int duration;
 	String status_response;
 	String message;
+	String result;
 	char status;
 	
 	
@@ -63,6 +64,12 @@ public class response_receved {
 	}
 	public void setJson_request(String json_request) {
 		this.json_request = json_request;
+	}
+	public String getResult() {
+		return result;
+	}
+	public void setResult(String result) {
+		this.result = result;
 	}
 	
 	

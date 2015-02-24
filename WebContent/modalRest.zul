@@ -1,11 +1,11 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk>
 	<window border="normal" apply="AppRestData.ModalRestController"
-		width="1200px" position="center,center" height="460px" id="window">
+		width="1200px" position="center,center" height="625px" id="window">
 		<borderlayout>
 			<north>
 				<listbox>
-					<listitem>
+					<listitem style="background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)">
 						<listcell id="cellName">
 							<label value="URL:" style="font-weight: bold;"></label>
 							<label id="labelUrl"></label>
@@ -18,23 +18,31 @@
 				</listbox>
 			</north>
 			<west width="200px" collapsible="true" splittable="true">
-				<listbox id="set_status" rows="20">
+				<listbox id="set_status" rows="16">
 					<listhead>
-						<listheader label="Status" align="center"></listheader>
+						<listheader label="Status" align="center" style="background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)"></listheader>
 					</listhead>
 				</listbox>
 			</west>
 			<center>
-				<groupbox mold="3d" height="400px">
+				<groupbox mold="3d" height="530px">
+					<listbox>
+						<listitem id="item_result">
+							<listcell>
+								<label value="Case:" style="font-weight: bold;"></label>
+								<label id="labelResult"></label>
+							</listcell>
+						</listitem>
+					</listbox>
 					<listbox>
 						<listhead>
-							<listheader label="Request"></listheader>
+							<listheader label="Request" style="background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)"></listheader>
 						</listhead>
 						<listitem selected="false">
 							<listcell id="listcell_request"
-								height="135px">
+								height="110px">
 								<textbox id="text_request"
-									height="130px" width="100%" multiline="true"
+									height="105px" width="100%" multiline="true"
 									style="color: #4C49A2">
 								</textbox>
 							</listcell>
@@ -42,13 +50,32 @@
 					</listbox>
 					<listbox>
 						<listhead>
-							<listheader label="Response"></listheader>
+							<listheader label="Response" style="background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)"></listheader>
 						</listhead>
 						<listitem selected="false">
 							<listcell id="listcell_response"
-								height="135px">
+								height="110px">
 								<textbox id="text_response"
-									height="130px" width="100%" multiline="true"
+									height="105px" width="100%" multiline="true"
+									style="color: #4C49A2">
+								</textbox>
+							</listcell>
+						</listitem>
+					</listbox>
+					<listbox>
+						<listhead>
+							<listheader label="Expected Response" style="background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)"></listheader>
+						</listhead>
+						<listitem>	
+							<listcell>
+								<label value="Name Response:" style="font-weight: bold;"></label>
+								<label id="labelNameResponse"></label>
+							</listcell>
+						</listitem>
+						<listitem selected="false">
+							<listcell height="110px">
+								<textbox id="text_response_expected"
+									height="105px" width="100%" multiline="true"
 									style="color: #4C49A2">
 								</textbox>
 							</listcell>

@@ -9,6 +9,7 @@ public class response_expected {
 	String json_response_expected;
 	String name;
 	char status;
+	String cod_status;
 	
 	public int getId_request_expected() {
 		return id_request_expected;
@@ -39,5 +40,12 @@ public class response_expected {
 	}
 	public void setStatus(char status) {
 		this.status = status;
-	}	
+	}
+	public String getCod_status() {
+		return cod_status;
+	}
+	public void setCod_status(String cod_status) {
+		this.cod_status = cod_status;
+	}
+	
 }

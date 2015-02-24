@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import jdk.nashorn.internal.runtime.ListAdapter;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.fluttercode.datafactory.impl.DataFactory;
 import org.zkoss.json.JSONArray;
@@ -120,7 +122,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	private Button add_item_response;
 	@Wire
 	private Button detele_item_response;
-	
+	@Wire
+	private Intbox text_status;
 	//------------------------------------------------------------
 
 	
@@ -176,7 +179,6 @@ public class AppRestDataController extends SelectorComposer<Component> {
 				textValue.setDisabled(false);
 			}
 		}
-
 	}
 
 
@@ -209,13 +211,16 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	public void addItemResponse(){
 		Listitem item = new Listitem();
 		Listcell cellresponse = new Listcell(text_name_response.getValue());
+		Listcell cellCodStatus = new Listcell(Integer.toString(text_status.getValue()));
 		Listcell celljson = new Listcell(text_json_response.getValue());
 		item.appendChild(cellresponse);
+		item.appendChild(cellCodStatus);
 		item.appendChild(celljson);
 		set_response_expected.appendChild(item);
 		set_response_expected.setSelectedItem(item);
 		limpiar2();
 	}
+	
 	
 	@Listen("onClick = #detele_item_response")
 	public void deleteItemResponse(){
@@ -368,20 +373,24 @@ public class AppRestDataController extends SelectorComposer<Component> {
 							ArrayList<String> listValueHeader = new ArrayList<>();
 							ArrayList<Integer> listStatus = new ArrayList<>();
 							ArrayList<String> listResponse = new ArrayList<>();
+							ArrayList<Integer> listCodStatus= new ArrayList<>();
 							ArrayList<String> listRequestSend = new ArrayList<>();
 							ArrayList<Integer> listTimeConnection = new ArrayList<>();
 							ArrayList<String> listResponseMessage = new ArrayList<>();
 							ArrayList<String> listNameResponse = new ArrayList<>();
 							ArrayList<String> listJsonResponse = new ArrayList<>();
+							ArrayList<String> listResult = new ArrayList<>();
+					
 							List<Listitem> lista = setData.getItems();
 							List<Listitem> lista1 = set_headers.getItems();
 							List<Listitem> lista2 = set_response_expected.getItems();
 							String urlService = text_url.getValue();
 							String nameService = text_value.getValue();
+							String result = "";
 
 							ordenarParametros(listString, lista, listValuesValidate, listLengthMin,listLengthMax, listRequired, listCampo);
 							obtenerHeaders(listHeader, listValueHeader, lista1);
-							obtenerResponses(listNameResponse, listJsonResponse, lista2);
+							obtenerResponses(listNameResponse, listJsonResponse,listCodStatus, lista2);
 							
 							//int lineas = Integer.parseInt(text_row.getValue());
 							//int lineas_min = (3 + listString.size());
@@ -394,6 +403,9 @@ public class AppRestDataController extends SelectorComposer<Component> {
 							 RestClient rest = new RestClient(); 
 							 JSONArray listJson = rest.gerenateJson(listCaso,listCampo); 
 							 rest.post(listJson, listStatus, listResponse, listRequestSend, listTimeConnection, listHeader, listValueHeader,listResponseMessage,urlService,nameService);
+							 listResult = obtenerResult(listJsonResponse, listCodStatus, listResponse, listStatus);
+							 
+							 
 							 
 							 Date date= new Date(); 
 							 Timestamp time = new Timestamp(date.getTime());
@@ -425,6 +437,7 @@ public class AppRestDataController extends SelectorComposer<Component> {
 									 response_expected response_exp = new response_expected();
 									 response_exp.setName(listNameResponse.get(r));
 									 response_exp.setJson_response_expected(listJsonResponse.get(r));
+									 response_exp.setCod_status(Integer.toString(listCodStatus.get(r)));
 									 response_exp.setStatus('A');
 									 response_expectedDao response_expDao = new response_expectedDao();
 									 Boolean resgistroRE = response_expDao.registrarResponseExpected(request, response_exp);
@@ -438,11 +451,14 @@ public class AppRestDataController extends SelectorComposer<Component> {
 									 response_rec.setJson_request(listRequestSend.get(re));
 									 response_rec.setJson_response_receved(listResponse.get(re));
 									 response_rec.setDuration(listTimeConnection.get(re));
+									 response_rec.setResult(listResult.get(re));
 									 response_rec.setStatus('A');
 									 response_recevedDao response_recDao = new response_recevedDao();
 									 Boolean registroRR = response_recDao.registrarResponseReceved(request, response_rec);
 									 System.out.println("Registro response_receved:" +registroRR);
 								 }
+								 Messagebox mensaje2 = new Messagebox();
+								 mensaje2.show("Successful operation!");
 								 //limpiarListas();
 							 }else{
 								 Messagebox mensaje1 = new Messagebox();
@@ -455,6 +471,30 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		
 		 //GenerateTXT(row, lineas, listCaso);
 
+	}
+	
+	public ArrayList<String> obtenerResult(ArrayList<String> listJsonResponse,ArrayList<Integer>listCodStatus,ArrayList<String>listResponse,ArrayList<Integer> listStatus){
+		ArrayList<String> listResult = new ArrayList<>();
+		String result="";
+			for(int i=0; i<listStatus.size();++i){
+				if(listStatus.get(i)!=200){
+					for(int j=0; j<listCodStatus.size();++j){
+						if(listCodStatus.get(j).equals(listStatus.get(i))){
+							if(listJsonResponse.get(j).equals(listResponse.get(i))){
+								result = "Passed";
+								listResult.add(result);
+								System.out.println(result);
+							}
+							else{
+								result= "Failed";
+								listResult.add(result);
+								System.out.println(result);
+							}
+						}
+					}
+				}
+			}
+		return listResult;
 	}
 	
 	public void habilitarButton(){
@@ -554,7 +594,7 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		}
 	}
 	
-	public void obtenerResponses(ArrayList<String> listNameResponse, ArrayList<String> listJsonResponse, List<Listitem> lista2){
+	public void obtenerResponses(ArrayList<String> listNameResponse, ArrayList<String> listJsonResponse,ArrayList<Integer> listCodStatus,List<Listitem> lista2){
 		for (Listitem currentList : lista2) {
 			List<Component> com = currentList.getChildren();
 			for (Component currentComp : com) {
@@ -563,6 +603,9 @@ public class AppRestDataController extends SelectorComposer<Component> {
 					listNameResponse.add(lc.getLabel());
 				}
 				if(lc.getColumnIndex()==1){
+					listCodStatus.add(Integer.parseInt(lc.getLabel()));					
+				}
+				if(lc.getColumnIndex()==2){
 					listJsonResponse.add(lc.getLabel());
 				}
 			}

@@ -19,6 +19,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import Dao.Cdao;
+import Dao.response_expectedDao;
 import Dao.response_recevedDao;
 
 import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
@@ -44,6 +45,14 @@ public class ModalRestController extends SelectorComposer<Component> {
 	private Label labelUrl;
 	@Wire
 	private Label labelName;
+	@Wire
+	private Label labelResult;
+	@Wire
+	private Label labelNameResponse;
+	@Wire
+	private Listitem item_result;
+	@Wire
+	private Textbox text_response_expected;
 	
 	ArrayList<String> listStatus = new ArrayList<>();
 	ArrayList<String> listMessage = new ArrayList<>();
@@ -51,7 +60,10 @@ public class ModalRestController extends SelectorComposer<Component> {
 	ArrayList<String> listJsonSend = new ArrayList<>();
 	ArrayList<String> listname = new ArrayList<>();
 	ArrayList<String> listurl = new ArrayList<>();
-	
+	ArrayList<String> listResult = new ArrayList<>();
+	ArrayList<String> listNameResponse = new ArrayList<>();
+	ArrayList<String> listJsonResponse_exp = new ArrayList<>();
+	ArrayList<String> listCodStatus = new ArrayList<>();
 	
 
 	public void show(){
@@ -63,7 +75,10 @@ public class ModalRestController extends SelectorComposer<Component> {
 	public void load() {
 	
 		response_recevedDao rrDao = new response_recevedDao();
-		rrDao.obtenerResponseReceved(listStatus,listMessage, listJsonR,listJsonSend,listname,listurl);
+		response_expectedDao reDao = new response_expectedDao();
+		rrDao.obtenerResponseReceved(listStatus,listMessage, listJsonR,listJsonSend,listname,listurl,listResult);
+		reDao.obtenerResponseExpected(listNameResponse, listJsonResponse_exp, listCodStatus);
+		
 		labelUrl.setValue(listurl.get(0));
 		labelName.setValue(listname.get(0));
 		
@@ -79,11 +94,13 @@ public class ModalRestController extends SelectorComposer<Component> {
 				item.appendChild(cellStatus);
 				set_status.appendChild(item);
 		}
-		System.out.println(listStatus);
-		System.out.println(listJsonR);
 		
 		
+	
 	}
+	
+	
+	
 	
 	@Listen("onSelect = #set_status")
 	public void selectStatus(){
@@ -94,6 +111,16 @@ public class ModalRestController extends SelectorComposer<Component> {
 		System.out.println(listJsonR.get(index));
 		text_request.setValue(listJsonSend.get(index));
 		text_response.setValue(listJsonR.get(index));
+		labelResult.setValue(listResult.get(index));
+		item_result.setStyle("background-color: #ffeac2");
+		
+		for(int i=0; i<listCodStatus.size();++i){
+			if(listCodStatus.get(i).equals(listStatus.get(index))){
+				text_response_expected.setValue(listJsonResponse_exp.get(i));
+				labelNameResponse.setValue(listNameResponse.get(i));
+			}
+		}
+		
 	}
 	
 	@Listen("onClick = #button_exist")
