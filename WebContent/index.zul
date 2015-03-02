@@ -9,7 +9,7 @@
 			splittable="true" minsize="300" sclass="west">
 			
 			<grid hflex="1" vflex="1" sclass="sidebar-fn">
-			<zscript><![CDATA[ String link1= "dataRandom.zul"; String link2="restClient.zul"
+			<zscript><![CDATA[ String link1= "dataRandom.zul"; String link2="history.zul"
     		]]>
 			</zscript>
 				<columns style="color:#FFFFFF">
@@ -23,7 +23,7 @@
 							style="font-weight: bold; color:#FFFFFF">
 						</label>
 					</row>
-					<row style="background-color: #6DB33F" >
+					<row style="background-color: #6DB33F" onClick="inc_center.src=link2" >
 						<image src="/imgs/data.png" />
 						<label value="History"
 							style="font-weight: bold; color:#FFFFFF">

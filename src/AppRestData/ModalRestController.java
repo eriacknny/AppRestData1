@@ -112,7 +112,10 @@ public class ModalRestController extends SelectorComposer<Component> {
 		text_request.setValue(listJsonSend.get(index));
 		text_response.setValue(listJsonR.get(index));
 		labelResult.setValue(listResult.get(index));
-		item_result.setStyle("background-color: #ffeac2");
+		if(listResult.get(index).equals("Failed"))
+			item_result.setStyle("background-color: #ffeac2");
+		else
+			item_result.setStyle("background-color: #c3ffb1");
 		
 		for(int i=0; i<listCodStatus.size();++i){
 			if(listCodStatus.get(i).equals(listStatus.get(index))){

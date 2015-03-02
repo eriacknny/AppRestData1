@@ -46,10 +46,12 @@ import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 import AppRestData.TestCase;
 import Dao.headerDao;
+import Dao.parameterDao;
 import Dao.requestDao;
 import Dao.response_expectedDao;
 import Dao.response_recevedDao;
 import Modelo.header;
+import Modelo.parameter;
 import Modelo.request;
 import Modelo.response_expected;
 import Modelo.response_receved;
@@ -457,6 +459,37 @@ public class AppRestDataController extends SelectorComposer<Component> {
 									 Boolean registroRR = response_recDao.registrarResponseReceved(request, response_rec);
 									 System.out.println("Registro response_receved:" +registroRR);
 								 }
+								 
+								 for(int p=0; p<listString.size();++p){
+									 parameter parameter = new parameter();
+									 parameter.setField_name(listCampo.get(p));
+									 parameter.setType(listString.get(p));
+									 parameter.setValue(listValuesValidate.get(p));
+									 if(listLengthMin.get(p)==null && listLengthMax.get(p)==null){
+										 parameter.setLengthMin(0);
+										 parameter.setLengthMax(0);
+									 }
+									 if(listLengthMin.get(p)!=null && listLengthMax.get(p)!=null){
+										 parameter.setLengthMin(listLengthMin.get(p));
+										 parameter.setLengthMax(listLengthMax.get(p));
+									 }
+									 if(listLengthMin.get(p)==null && listLengthMax.get(p)!=null){
+											 parameter.setLengthMin(0);
+										 	 parameter.setLengthMax(listLengthMax.get(p));
+									 }
+									 if(listLengthMin.get(p)!=null && listLengthMax.get(p)==null){
+											 parameter.setLengthMin(listLengthMin.get(p));
+											 parameter.setLengthMax(0);
+									 }
+									 parameter.setRequired(listRequired.get(p));
+									 parameter.setStatus('A');
+									 parameterDao parameterDao = new parameterDao();
+									 boolean registroP = parameterDao.registrarParameter(request, parameter);
+									 System.out.println("Registro Parametro:" + registroP);
+									 
+									 
+								 }
+								 
 								 Messagebox mensaje2 = new Messagebox();
 								 mensaje2.show("Successful operation!");
 								 //limpiarListas();
@@ -491,6 +524,19 @@ public class AppRestDataController extends SelectorComposer<Component> {
 								System.out.println(result);
 							}
 						}
+					}					
+				}
+				else{
+					boolean jsonStringValid = JSONUtils.isJSONValid(listResponse.get(i));
+					if(jsonStringValid==true){
+						result = "Passed";
+						listResult.add(result);
+						System.out.println(result);
+					}
+					else{
+						result = "Failed";
+						listResult.add(result);
+						System.out.println(result);
 					}
 				}
 			}

@@ -1,0 +1,139 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window border="normal" height="700px" zclass="z-window-popup"
+		apply="AppRestData.HistoryController">
+		<borderlayout>
+			<north>
+				<groupbox>
+						<button id="button_load1" width="125px" label="Load Services"></button>
+				</groupbox>
+			</north>
+			<west width="150px" collapsible="true" splittable="true">
+				<groupbox>
+					
+					<groupbox>
+						<listbox id="set_services" rows="22">
+							<listhead>
+								<listheader label="Service"
+									align="center"
+									style="background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)">
+								</listheader>
+							</listhead>
+						</listbox>
+					</groupbox>
+				</groupbox>
+			</west>
+			<center>
+				<groupbox>
+					<groupbox mold="3d">
+						<caption label="Service"
+							style="background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)">
+						</caption>
+						<listbox>
+							<listitem>
+								<listcell>
+									<label value="URL:"></label>
+									<textbox id="text_url"
+										width="400px">
+									</textbox>
+								</listcell>
+								<listcell>
+									<label value="Name:"></label>
+									<textbox id="text_nameService"
+										width="400px">
+									</textbox>
+								</listcell>
+							</listitem>
+						</listbox>
+					</groupbox>
+					<groupbox mold="3d">
+						<caption label="Headers"
+							style=" background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)">
+						</caption>
+						<groupbox>
+							<listbox id="set_headers" rows="3">
+								<listhead>
+									<listheader label="Header"></listheader>
+									<listheader label="Value"></listheader>
+								</listhead>
+							</listbox>
+						</groupbox>
+						<groupbox>
+							<listbox>
+								<listitem>
+									<listcell>
+										<label value="Header"></label>
+										<textbox id="text_header"
+											width="250px">
+										</textbox>
+									</listcell>
+									<listcell>
+										<label value="Value:"></label>
+										<textbox id="text_value"
+											width="250px">
+										</textbox>
+									</listcell>
+									<listcell>
+										<button id="add_item_header"
+											label="Add">
+										</button>
+										<button id="detele_item_header"
+											label="Delete">
+										</button>
+									</listcell>
+								</listitem>
+							</listbox>
+						</groupbox>
+						<groupbox mold="3d">
+							<caption label="Expected Response"
+								style=" background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)">
+							</caption>
+							<listbox id="set_response_expected"
+								rows="3">
+								<listhead>
+									<listheader label="Name"></listheader>
+									<listheader label="Status"></listheader>
+									<listheader label="Json"></listheader>
+								</listhead>
+							</listbox>
+						</groupbox>
+						<groupbox>
+							<listbox>
+								<listitem>
+									<listcell>
+										<label value="Name"></label>
+										<textbox id="text_name_response"
+											width="200px">
+										</textbox>
+									</listcell>
+									<listcell>
+										<label value="Status:"></label>
+										<intbox id="text_status"
+											width="100px">
+										</intbox>
+									</listcell>
+									<listcell>
+										<label value="Json:"></label>
+										<textbox id="text_json_response" 
+											width="200px">
+										</textbox>
+									</listcell>
+									<listcell>
+										<button id="add_item_response"
+											label="Add">
+										</button>
+										<button
+											id="detele_item_response" label="Delete">
+										</button>
+
+									</listcell>
+								</listitem>
+							</listbox>
+						</groupbox>
+
+					</groupbox>
+				</groupbox>
+			</center>
+		</borderlayout>
+	</window>
+</zk>
