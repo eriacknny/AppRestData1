@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import org.zkoss.json.JSONArray;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+
 import Modelo.request;
 import Modelo.response_receved;
 
@@ -61,9 +63,9 @@ public class response_recevedDao {
 				+ id + "";
 
 		ResultSet resultado = dao.retorna_sql(sql1);
-
+		
 		try {
-
+			
 			while (resultado.next()) {
 				listurl.add(resultado.getString("url"));
 				listname.add(resultado.getString("name"));

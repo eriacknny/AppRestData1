@@ -1,7 +1,6 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<window border="normal" height="700px" zclass="z-window-popup"
-		apply="AppRestData.HistoryController">
+	<window border="normal" height="700px" zclass="z-window-popup">
 		<borderlayout>
 			<north>
 				<groupbox>

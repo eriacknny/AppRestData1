@@ -13,6 +13,7 @@ import jdk.nashorn.internal.runtime.ListAdapter;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.fluttercode.datafactory.impl.DataFactory;
+import org.zkoss.idom.Item;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.zhtml.Button;
@@ -21,10 +22,13 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.DropEvent;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueue;
+import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.ext.Disable;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
@@ -56,84 +60,137 @@ import Modelo.request;
 import Modelo.response_expected;
 import Modelo.response_receved;
 
-public class AppRestDataController extends SelectorComposer<Component> {
+public class AppRestDataController extends GenericForwardComposer {
 
-	@Wire
+	
 	private Listbox setData;
-	@Wire
 	private Listbox set_headers;
-	@Wire
 	private Listbox set_response_expected;
-	@Wire
 	private Button add_item;
-	@Wire
 	private Button detete_item;
-	@Wire
 	private Button button_generate;
-	@Wire
 	private Button button_cancel;
-	@Wire
 	private Button button_result;
-	@Wire
 	private Textbox text_delimiter;
-	@Wire
 	private Textbox text_path;
-	@Wire
 	private Textbox text_row;
-	@Wire
 	private Textbox textFieldName;
-	@Wire
 	private Combobox comboType;
-	@Wire
 	private Textbox textValue;
-	@Wire
 	private Checkbox checkRequired;
-	@Wire
 	private Datebox dateBox;
-	@Wire
 	private Listbox listboxLenth;
-	@Wire
 	private Intbox intboxMin;
-	@Wire
 	private Intbox intboxMax;
-	@Wire
 	private Tabbox tabbox;
-	@Wire
 	private Tab tab_csv;
-	@Wire
 	private Tab tab_exel;
-	@Wire
 	private Tab tab_json;
-	@Wire
 	private Textbox text_header;
-	@Wire
 	private Textbox text_value;
-	@Wire
 	private Button add_item_header;
-	@Wire
 	private Button detele_item_header;
-	@Wire
 	private Textbox text_url;
-	@Wire
 	private Textbox text_nameService;
-	@Wire
 	private Textbox text_name_response;
-	@Wire
 	private Textbox text_json_response;
-	@Wire
 	private Button add_item_response;
-	@Wire
 	private Button detele_item_response;
-	@Wire
 	private Intbox text_status;
+	private EventQueue qe = EventQueues.lookup("connection", true);
+	private EventQueue qe1 = EventQueues.lookup("connection1", true);
+	private EventQueue qe2 = EventQueues.lookup("connection2", true);
+	private EventQueue qe3 = EventQueues.lookup("connection3", true);
 	//------------------------------------------------------------
 
+	public void doAfterCompose(Component comp) throws Exception {
+		super.doAfterCompose(comp);
+		
+		qe.subscribe(new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				if(event.getName().equals("mensaje")){	
+					request re = new request();
+					re = (request) event.getData();
+					text_url.setValue(re.getUrl());
+					text_nameService.setValue(re.getName());
+				}
+				
+			}
+		});
+		qe1.subscribe(new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				if(event.getName().equals("mensaje1")){	
+					ArrayList<header> listHeader = (ArrayList<header>) event.getData();
+					set_headers.getItems().clear();
+					for(int i=0; i<listHeader.size();++i){
+						Listitem item = new Listitem();
+						Listcell cellHeader = new Listcell(listHeader.get(i).getName());
+						Listcell cellValue = new Listcell(listHeader.get(i).getValue());
+						item.appendChild(cellHeader);
+						item.appendChild(cellValue);
+						set_headers.appendChild(item);
+					}
+				}
+				
+			}
+		});
+		
+		qe2.subscribe(new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				if(event.getName().equals("mensaje2")){	
+					ArrayList<parameter> listParameter = (ArrayList<parameter>) event.getData();
+					setData.getItems().clear();
+					for(int i=0; i<listParameter.size();++i){
+						Listitem item = new Listitem();
+						Listcell cellname = new Listcell(listParameter.get(i).getField_name());
+						Listcell celltype = new Listcell(listParameter.get(i).getType());
+						Listcell cellvalue = new Listcell(listParameter.get(i).getValue());
+						Listcell celllengthMin = new Listcell(Integer.toString(listParameter.get(i).getLengthMin()));
+						Listcell celllengthMax = new Listcell(Integer.toString(listParameter.get(i).getLengthMax()));
+						Listcell cellrequired = new Listcell(Boolean.toString(listParameter.get(i).isRequired()));
+						item.appendChild(cellname);
+						item.appendChild(celltype);
+						item.appendChild(cellvalue);
+						item.appendChild(celllengthMin);
+						item.appendChild(celllengthMax);
+						item.appendChild(cellrequired);
+						setData.appendChild(item);
+						
+					}
+				}
+				
+			}
+		});
+		
+		qe3.subscribe(new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				if(event.getName().equals("mensaje3")){	
+					ArrayList<response_expected> listRe = (ArrayList<response_expected>) event.getData();
+					set_response_expected.getItems().clear();
+					for(int i=0; i<listRe.size();++i){
+						Listitem item = new Listitem();
+						Listcell cellresponse = new Listcell(listRe.get(i).getJson_response_expected());
+						Listcell cellCodStatus = new Listcell(listRe.get(i).getCod_status());
+						Listcell celljson = new Listcell(listRe.get(i).getJson_response_expected());
+						item.appendChild(cellresponse);
+						item.appendChild(cellCodStatus);
+						item.appendChild(celljson);
+						set_response_expected.appendChild(item);
+					}
+				}
+				
+			}
+		});
+	}
+	
+	
+	
 	
 
 	// Metodo para bloquear el campo longitud que el caso de que el tipo de
 	// valor no amerite longitud
-	@Listen("onSelect = #comboType")
-	public void selectCamposSinLongitud() {
+	
+	public void onSelect$comboType() {
 		if ((comboType.getValue().equals("FirstName"))
 				|| (comboType.getValue().equals("LastName"))
 				|| (comboType.getValue().equals("Email"))
@@ -184,8 +241,9 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	}
 
 
-	@Listen("onClick = #add_item_header ")
-	public void addItemHeader() {
+
+	
+	public void onClick$add_item_header() {
 		Listitem item = new Listitem();
 		Listcell cellHeader = new Listcell(text_header.getValue());
 		Listcell cellValue = new Listcell(text_value.getValue());
@@ -196,8 +254,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		limpiar1();
 	}
 
-	@Listen("onClick = #detele_item_header ")
-	public void deleteItemHeader() {
+
+	public void onClick$detele_item_header() {
 		int index = set_headers.getSelectedIndex();
 		System.out.println(index);
 		if (index >= 0) {
@@ -209,8 +267,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		}
 	}
 	
-	@Listen("onClick = #add_item_response")
-	public void addItemResponse(){
+	
+	public void onClick$add_item_response(){
 		Listitem item = new Listitem();
 		Listcell cellresponse = new Listcell(text_name_response.getValue());
 		Listcell cellCodStatus = new Listcell(Integer.toString(text_status.getValue()));
@@ -224,8 +282,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	}
 	
 	
-	@Listen("onClick = #detele_item_response")
-	public void deleteItemResponse(){
+
+	public void onClick$detele_item_response(){
 		int index = set_response_expected.getSelectedIndex();
 		System.out.println(index);
 		if (index >= 0) {
@@ -240,8 +298,7 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	
 
 	// Metodo para agragar una fila a la tabla
-	@Listen("onClick = #add_item")
-	public void addItem() {
+	public void onClick$add_item() {
 
 		if ((comboType.getValue().equals("FirstName"))
 				|| (comboType.getValue().equals("LastName"))
@@ -322,8 +379,7 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	}
 
 	// Metodo para eliminar una fila
-	@Listen("onClick = #detete_item")
-	public void deleteItem() {
+	public void onClick$detete_item() {
 		int index = setData.getSelectedIndex();
 		if (index >= 0) {
 			// remove the selected item
@@ -334,8 +390,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		}
 	}
 	
-	@Listen("onClick = #button_cancel")
-	public void Cancel(){
+
+	public void onClick$button_cancel(){
 		limpiar();
 		limpiar1();
 		limpiar2();
@@ -343,16 +399,16 @@ public class AppRestDataController extends SelectorComposer<Component> {
 		limpiarListas();
 	}
 	
-	@Listen ("onClick = #button_result")
-	public void Results(){
+	
+
+	public void onClick$button_result(){
 		 Window window = (Window)Executions.createComponents("modalRest.zul", null, null);
 	        window.doModal();
 	}
 	
 
 	// Método para generar los casos de prueba
-	@Listen("onClick = #button_generate")
-	public void Generate() {
+	public void onClick$button_generate() {
 		
 		
 		Messagebox mensaje = new Messagebox();
@@ -405,7 +461,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 							 RestClient rest = new RestClient(); 
 							 JSONArray listJson = rest.gerenateJson(listCaso,listCampo); 
 							 rest.post(listJson, listStatus, listResponse, listRequestSend, listTimeConnection, listHeader, listValueHeader,listResponseMessage,urlService,nameService);
-							 listResult = obtenerResult(listJsonResponse, listCodStatus, listResponse, listStatus);
+							 CompareResult compareResult = new CompareResult();
+							 listResult = compareResult.obtenerResult(listJsonResponse, listCodStatus, listResponse, listStatus);
 							 
 							 
 							 
@@ -506,46 +563,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 
 	}
 	
-	public ArrayList<String> obtenerResult(ArrayList<String> listJsonResponse,ArrayList<Integer>listCodStatus,ArrayList<String>listResponse,ArrayList<Integer> listStatus){
-		ArrayList<String> listResult = new ArrayList<>();
-		String result="";
-			for(int i=0; i<listStatus.size();++i){
-				if(listStatus.get(i)!=200){
-					for(int j=0; j<listCodStatus.size();++j){
-						if(listCodStatus.get(j).equals(listStatus.get(i))){
-							if(listJsonResponse.get(j).equals(listResponse.get(i))){
-								result = "Passed";
-								listResult.add(result);
-								System.out.println(result);
-							}
-							else{
-								result= "Failed";
-								listResult.add(result);
-								System.out.println(result);
-							}
-						}
-					}					
-				}
-				else{
-					boolean jsonStringValid = JSONUtils.isJSONValid(listResponse.get(i));
-					if(jsonStringValid==true){
-						result = "Passed";
-						listResult.add(result);
-						System.out.println(result);
-					}
-					else{
-						result = "Failed";
-						listResult.add(result);
-						System.out.println(result);
-					}
-				}
-			}
-		return listResult;
-	}
-	
-	public void habilitarButton(){
-		
-	}
+
+
 
 	// Método para encontrar el orden de los parametros indicados
 	public void ordenarParametros(ArrayList<String> listString,
@@ -739,6 +758,8 @@ public class AppRestDataController extends SelectorComposer<Component> {
 	}
 	
 
+	
+	
 	
 	
 }

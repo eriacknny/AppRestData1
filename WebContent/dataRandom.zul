@@ -1,7 +1,7 @@
 <?link rel="stylesheet" type="text/css" href="/style.css"?>
 <zk>
 	<window border="normal" height="100%" zclass="z-window-popup"
-		apply="AppRestData.AppRestDataController">
+		apply="AppRestData.AppRestDataController" >
 		<groupbox mold="3d" >
 			<caption label="Service" style="background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)"></caption>
 			<listbox>
