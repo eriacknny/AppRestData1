@@ -16,7 +16,7 @@ public class response_recevedDao {
 			response_receved response_rec) {
 		try {
 
-			String sql = "insert into response_receved (id_request, json, json_send, status_response, message, duration,result,status) values((select id from request where name = '"
+			String sql = "insert into response_receved (id_request, json, json_send, status_response, message, duration,result,status,time) values((select id from request where name = '"
 					+ request.getName()
 					+ "'),'"
 					+ response_rec.getJson_response_receved()
@@ -31,7 +31,10 @@ public class response_recevedDao {
 					+ "','"
 					+ response_rec.getResult()
 					+ "','"
-					+ response_rec.getStatus() + "')";
+					+ response_rec.getStatus()
+					+ "','"
+					+ response_rec.getTime()
+					+ "')";
 			Cdao ocado = new Cdao();
 			if (ocado.ejecuta_sql(sql)) {
 				return true;
@@ -63,9 +66,9 @@ public class response_recevedDao {
 				+ id + "";
 
 		ResultSet resultado = dao.retorna_sql(sql1);
-		
+
 		try {
-			
+
 			while (resultado.next()) {
 				listurl.add(resultado.getString("url"));
 				listname.add(resultado.getString("name"));

@@ -101,22 +101,32 @@ public class RestClient {
 
 	}
 
-	public void get() {
-		final String targetURL = "";
+	public void get(String urlService,ArrayList<String> listHeader, ArrayList<String> listValueHeader) {
+		final String targetURL = urlService;
 		try {
 
 			URL restServiceURL = new URL(targetURL);
 
 			HttpURLConnection httpConnection = (HttpURLConnection) restServiceURL.openConnection();
 			httpConnection.setRequestMethod("GET");
-			httpConnection.setRequestProperty("Accept", "application/json");
-
+			
+			for (int p = 0; p < listHeader.size(); ++p){
+				httpConnection.setRequestProperty(listHeader.get(p),listValueHeader.get(p));
+			}
+		
 			int httpResult = httpConnection.getResponseCode();
+			StringBuilder sb = new StringBuilder();
 
 			if (httpConnection.getResponseCode() != 200) {
 				throw new RuntimeException(
 						"HTTP GET Request Failed with Error code : "
 								+ httpConnection.getResponseCode());
+			}else{
+				BufferedReader br = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(), "utf-8"));
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					sb.append(line);
+				}
 			}
 
 			BufferedReader responseBuffer = new BufferedReader(

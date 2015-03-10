@@ -89,7 +89,6 @@
 					<listbox>
 						<listitem>
 							<listcell>
-								<button id="button_load" label="Load"></button>
 								<button id="button_exist"
 									label="Exit">
 								</button>

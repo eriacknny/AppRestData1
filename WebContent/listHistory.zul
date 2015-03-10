@@ -7,7 +7,6 @@
 				style="background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)">
 			</caption>
 			<listbox id="set_services" rows="15" width="150px">
-
 			</listbox>
 		</groupbox>
 	</window>

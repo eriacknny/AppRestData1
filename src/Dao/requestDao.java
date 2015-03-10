@@ -8,10 +8,10 @@ public class requestDao {
 
 	public boolean registrarRequest(request request) {
 		try {
-			String sql = "insert into request(url,json,name,time,status) values('"
+			String sql = "insert into request(url,json,name,time,status,type) values('"
 					+ request.getUrl() + "','" + request.getJson_request()
 					+ "','" + request.getName() + "','" + request.getTime()
-					+ "','" + request.getStatus() + "')";
+					+ "','" + request.getStatus() + "','"+request.getType()+"')";
 			Cdao ocado = new Cdao();
 			if (ocado.ejecuta_sql(sql)) {
 				return true;

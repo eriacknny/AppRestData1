@@ -2,18 +2,24 @@
 <zk>
 	<window border="normal" height="100%" zclass="z-window-popup"
 		apply="AppRestData.AppRestDataController" >
-		<groupbox mold="3d" >
-			<caption label="Service" style="background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)"></caption>
+		<groupbox mold="3d">
+			<caption label="Service"
+				style="background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)">
+			</caption>
 			<listbox>
 				<listitem>
 					<listcell>
 						<label value="URL:"></label>
-						<textbox id="text_url" width="400px"></textbox>
-					</listcell>
-					<listcell>
+						<textbox id="text_url" width="550px"></textbox>
 						<label value="Name:"></label>
-						<textbox id="text_nameService" width="400px">
+						<textbox id="text_nameService" width="330px">
 						</textbox>
+						<combobox id="comboTypeRequest" readonly="true">
+							<comboitem label="GET"></comboitem>
+							<comboitem label="POST"></comboitem>
+							<comboitem label="PUT"></comboitem>
+							<comboitem label="DELETE"></comboitem>
+						</combobox>
 					</listcell>
 				</listitem>
 			</listbox>
@@ -57,7 +63,7 @@
 		</groupbox>
 		<separator></separator>
 		<separator></separator>
-		<groupbox mold="3d">
+		<groupbox id="groupboxParameters1" mold="3d" visible="false">
 			<caption label="Parameters" style=" background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)"></caption>
 			<listbox id="setData" rows="4">
 				<listhead>
@@ -70,7 +76,7 @@
 				</listhead>
 			</listbox>
 		</groupbox>
-		<groupbox mold="3d">
+		<groupbox id="groupboxParameters2" mold="3d" visible="false">
 			<listbox>
 				<listitem>
 					<listcell>

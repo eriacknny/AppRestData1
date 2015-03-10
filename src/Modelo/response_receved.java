@@ -14,6 +14,7 @@ public class response_receved {
 	String message;
 	String result;
 	char status;
+	Date time;
 	
 	
 	public int getId_response_receved() {
@@ -70,6 +71,12 @@ public class response_receved {
 	}
 	public void setResult(String result) {
 		this.result = result;
+	}
+	public Date getTime() {
+		return time;
+	}
+	public void setTime(Date time) {
+		this.time = time;
 	}
 	
 	

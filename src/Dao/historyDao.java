@@ -12,12 +12,13 @@ import Modelo.header;
 import Modelo.parameter;
 import Modelo.request;
 import Modelo.response_expected;
+import Modelo.response_receved;
 
 public class historyDao {
 
 public ArrayList<request>  obtenerRequest(){
 		ArrayList<request> listRequest = new ArrayList<>();
-		String sql = "select r.id,r.name,r.url, r.time from request r where status ='A'";
+		String sql = "select r.id,r.name,r.url, r.time,r.type from request r where status ='A'";
 		Cdao ocado = new Cdao();
 		
 		ResultSet resultado = ocado.retorna_sql(sql);
@@ -30,8 +31,9 @@ public ArrayList<request>  obtenerRequest(){
 				request.setName(resultado.getString(2));
 				request.setUrl(resultado.getString(3));
 				request.setJson_request(null);
-				request.setStatus('A');
-				request.setTime(null);
+				request.setTime(resultado.getTimestamp(4));
+				request.setType(resultado.getString(5));
+				request.setStatus('A');				
 				listRequest.add(request);
 			}
 		} catch (SQLException e) {
@@ -126,4 +128,35 @@ public ArrayList<parameter> obtenerParametro(int id_request){
 		return listResponseE;
 	}
 
+	public ArrayList<response_receved> obtenerResponseReceived(int id_request) {
+		ArrayList<response_receved> listRR = new ArrayList<>();
+		String sql = "select id,id_request,status_response,message,json_send,json,result,time from response_receved where id_request = "
+				+ id_request + " and status='A'";
+		
+		Cdao ocado = new Cdao();
+		ResultSet resultado = ocado.retorna_sql(sql);
+		
+		try {
+
+			while (resultado.next()) {
+				response_receved rr = new response_receved();
+				rr.setId_response_receved(resultado.getInt(1));
+				rr.setId_request(resultado.getInt(2));
+				rr.setStatus_response(resultado.getString(3));
+				rr.setMessage(resultado.getString(4));
+				rr.setJson_request(resultado.getString(5));
+				rr.setJson_response_receved(resultado.getString(6));
+				rr.setResult(resultado.getString(7));
+				rr.setTime(resultado.getTimestamp(8));
+				rr.setStatus('A');
+				listRR.add(rr);
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return listRR;
+	}
 }

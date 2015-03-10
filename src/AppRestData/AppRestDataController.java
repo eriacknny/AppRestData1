@@ -33,6 +33,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -75,6 +76,7 @@ public class AppRestDataController extends GenericForwardComposer {
 	private Textbox text_path;
 	private Textbox text_row;
 	private Textbox textFieldName;
+	private Combobox comboTypeRequest;
 	private Combobox comboType;
 	private Textbox textValue;
 	private Checkbox checkRequired;
@@ -97,22 +99,35 @@ public class AppRestDataController extends GenericForwardComposer {
 	private Button add_item_response;
 	private Button detele_item_response;
 	private Intbox text_status;
+	private Groupbox groupboxParameters1;
+	private Groupbox groupboxParameters2;
 	private EventQueue qe = EventQueues.lookup("connection", true);
 	private EventQueue qe1 = EventQueues.lookup("connection1", true);
 	private EventQueue qe2 = EventQueues.lookup("connection2", true);
 	private EventQueue qe3 = EventQueues.lookup("connection3", true);
+
+	
+	ArrayList<parameter> listParameter;
+	ArrayList<header> listHeader;
+	ArrayList<response_expected> listRe;
+	request request;
+	
+	
+	EventQueue qe5 = EventQueues.lookup("connection5", true);
+	
 	//------------------------------------------------------------
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		
+		comboTypeRequest.setValue("GET");
 		qe.subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				if(event.getName().equals("mensaje")){	
-					request re = new request();
-					re = (request) event.getData();
-					text_url.setValue(re.getUrl());
-					text_nameService.setValue(re.getName());
+					request = new request();
+					request = (request) event.getData();
+					text_url.setValue(request.getUrl());
+					text_nameService.setValue(request.getName());
+					comboTypeRequest.setValue(request.getType());
 				}
 				
 			}
@@ -120,7 +135,7 @@ public class AppRestDataController extends GenericForwardComposer {
 		qe1.subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				if(event.getName().equals("mensaje1")){	
-					ArrayList<header> listHeader = (ArrayList<header>) event.getData();
+				    listHeader = (ArrayList<header>) event.getData();
 					set_headers.getItems().clear();
 					for(int i=0; i<listHeader.size();++i){
 						Listitem item = new Listitem();
@@ -138,15 +153,24 @@ public class AppRestDataController extends GenericForwardComposer {
 		qe2.subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				if(event.getName().equals("mensaje2")){	
-					ArrayList<parameter> listParameter = (ArrayList<parameter>) event.getData();
+					listParameter = (ArrayList<parameter>) event.getData();
 					setData.getItems().clear();
 					for(int i=0; i<listParameter.size();++i){
 						Listitem item = new Listitem();
 						Listcell cellname = new Listcell(listParameter.get(i).getField_name());
 						Listcell celltype = new Listcell(listParameter.get(i).getType());
 						Listcell cellvalue = new Listcell(listParameter.get(i).getValue());
-						Listcell celllengthMin = new Listcell(Integer.toString(listParameter.get(i).getLengthMin()));
-						Listcell celllengthMax = new Listcell(Integer.toString(listParameter.get(i).getLengthMax()));
+						Listcell celllengthMin;
+						Listcell celllengthMax;
+						if(listParameter.get(i).getLengthMin()!=0)
+							celllengthMin = new Listcell(Integer.toString(listParameter.get(i).getLengthMin()));
+						else
+							celllengthMin = new Listcell("null");
+						if(listParameter.get(i).getLengthMax()!=0)
+							celllengthMax = new Listcell(Integer.toString(listParameter.get(i).getLengthMax()));
+						else
+							celllengthMax = new Listcell("null");
+						
 						Listcell cellrequired = new Listcell(Boolean.toString(listParameter.get(i).isRequired()));
 						item.appendChild(cellname);
 						item.appendChild(celltype);
@@ -165,7 +189,7 @@ public class AppRestDataController extends GenericForwardComposer {
 		qe3.subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				if(event.getName().equals("mensaje3")){	
-					ArrayList<response_expected> listRe = (ArrayList<response_expected>) event.getData();
+					listRe = (ArrayList<response_expected>) event.getData();
 					set_response_expected.getItems().clear();
 					for(int i=0; i<listRe.size();++i){
 						Listitem item = new Listitem();
@@ -181,9 +205,22 @@ public class AppRestDataController extends GenericForwardComposer {
 				
 			}
 		});
+		
 	}
 	
-	
+	public void onSelect$comboTypeRequest(){
+		
+		if (comboTypeRequest.getValue().equals("POST")
+				|| comboTypeRequest.getValue().equals("PUT")
+				|| comboTypeRequest.getValue().equals("DELETE")) {
+			groupboxParameters1.setVisible(true);
+			groupboxParameters2.setVisible(true);
+		}
+		else{
+			groupboxParameters1.setVisible(false);
+			groupboxParameters2.setVisible(false);
+		}
+	}
 	
 	
 
@@ -402,8 +439,11 @@ public class AppRestDataController extends GenericForwardComposer {
 	
 
 	public void onClick$button_result(){
+		 qe5.publish(new Event("mensaje5",null,request));
 		 Window window = (Window)Executions.createComponents("modalRest.zul", null, null);
 	        window.doModal();
+	        
+	       
 	}
 	
 
@@ -468,11 +508,12 @@ public class AppRestDataController extends GenericForwardComposer {
 							 
 							 Date date= new Date(); 
 							 Timestamp time = new Timestamp(date.getTime());
-							 request request = new request();
+							 request = new request();
 							 request.setUrl(text_url.getValue());
 							 request.setJson_request(listJson);
 							 request.setName(text_nameService.getValue());
 							 request.setTime(time);
+							 request.setType(comboTypeRequest.getValue());
 							 request.setStatus('A');
 							 
 							
@@ -504,6 +545,7 @@ public class AppRestDataController extends GenericForwardComposer {
 								 }
 								 for(int re=0; re<listStatus.size();++re){
 									 response_receved response_rec = new response_receved();
+									 Timestamp time1 = new Timestamp(date.getTime());
 									 String valor = Integer.toString(listStatus.get(re)); 
 									 response_rec.setStatus_response(valor);
 									 response_rec.setMessage(listResponseMessage.get(re));
@@ -512,6 +554,7 @@ public class AppRestDataController extends GenericForwardComposer {
 									 response_rec.setDuration(listTimeConnection.get(re));
 									 response_rec.setResult(listResult.get(re));
 									 response_rec.setStatus('A');
+									 response_rec.setTime(time1);
 									 response_recevedDao response_recDao = new response_recevedDao();
 									 Boolean registroRR = response_recDao.registrarResponseReceved(request, response_rec);
 									 System.out.println("Registro response_receved:" +registroRR);

@@ -8,9 +8,14 @@ import org.zkoss.zhtml.Button;
 import org.zkoss.zhtml.I;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueue;
+import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -19,61 +24,71 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import Dao.Cdao;
+import Dao.historyDao;
 import Dao.response_expectedDao;
 import Dao.response_recevedDao;
+import Modelo.header;
+import Modelo.request;
+import Modelo.response_expected;
+import Modelo.response_receved;
 
 import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
-public class ModalRestController extends SelectorComposer<Component> {
-	@Wire
+public class ModalRestController extends GenericForwardComposer {
+	
 	private Listbox set_status;
-	@Wire
 	private Listcell listcell_request;
-	@Wire 
 	private Listcell listcell_response;
-	@Wire
-	private Button button_load;
-	@Wire
 	private Button button_exist;
-	@Wire
 	private Window window;
-	@Wire
 	private Textbox text_request;
-	@Wire
 	private Textbox text_response;
-	@Wire
 	private Label labelUrl;
-	@Wire
 	private Label labelName;
-	@Wire
 	private Label labelResult;
-	@Wire
 	private Label labelNameResponse;
-	@Wire
 	private Listitem item_result;
-	@Wire
 	private Textbox text_response_expected;
 	
-	ArrayList<String> listStatus = new ArrayList<>();
-	ArrayList<String> listMessage = new ArrayList<>();
-	ArrayList<String> listJsonR = new ArrayList<>();
-	ArrayList<String> listJsonSend = new ArrayList<>();
-	ArrayList<String> listname = new ArrayList<>();
-	ArrayList<String> listurl = new ArrayList<>();
-	ArrayList<String> listResult = new ArrayList<>();
-	ArrayList<String> listNameResponse = new ArrayList<>();
-	ArrayList<String> listJsonResponse_exp = new ArrayList<>();
-	ArrayList<String> listCodStatus = new ArrayList<>();
-	
 
-	public void show(){
-		window = (Window)Executions.createComponents("modalRest.zul",null,null);
-		window.doModal();
-	}
+	private EventQueue qe5 = EventQueues.lookup("connection5", true);
+
+	ArrayList<response_receved> listRR = new ArrayList<>();
+	ArrayList<response_expected> listRe = new ArrayList<>();
+	request request;
 	
-	@Listen("onClick = #button_load")
-	public void load() {
 	
+	public void doAfterCompose(Component comp) throws Exception {
+		super.doAfterCompose(comp);
+	
+		qe5.subscribe(new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				if(event.getName().equals("mensaje5")){	
+					request = new request();
+					request = (request) event.getData();
+					labelUrl.setValue(request.getUrl());
+					labelName.setValue(request.getName());
+					historyDao historyDao = new historyDao();
+					listRR = historyDao.obtenerResponseReceived(request.getId_request());
+					listRe = historyDao.obtenerResponseExpected(request.getId_request());
+					for(int i=0; i<listRR.size();++i){	
+						Listitem item = new Listitem();
+						Listcell cellStatus = new Listcell(listRR.get(i).getStatus_response() + " " + listRR.get(i).getMessage());
+						if(listRR.get(i).getStatus_response().equals("200"))
+							item.setStyle("background-color: #c3ffb1");
+						else
+							item.setStyle("background-color: #ffeac2");
+						item.appendChild(cellStatus);
+						set_status.appendChild(item);
+					}
+				}
+				
+			}
+		});
+		
+				
+		
+		/*	
 		response_recevedDao rrDao = new response_recevedDao();
 		response_expectedDao reDao = new response_expectedDao();
 		rrDao.obtenerResponseReceved(listStatus,listMessage, listJsonR,listJsonSend,listname,listurl,listResult);
@@ -94,40 +109,35 @@ public class ModalRestController extends SelectorComposer<Component> {
 				item.appendChild(cellStatus);
 				set_status.appendChild(item);
 		}
+		*/
 		
-		
-	
 	}
+
 	
-	
-	
-	
-	@Listen("onSelect = #set_status")
-	public void selectStatus(){
+
+	public void onSelect$set_status(){
 		text_request.setValue("");
 		text_response.setValue("");
 		int index = set_status.getSelectedIndex();
-		System.out.println(index);
-		System.out.println(listJsonR.get(index));
-		text_request.setValue(listJsonSend.get(index));
-		text_response.setValue(listJsonR.get(index));
-		labelResult.setValue(listResult.get(index));
-		if(listResult.get(index).equals("Failed"))
+		text_request.setValue(listRR.get(index).getJson_request());
+		text_response.setValue(listRR.get(index).getJson_response_receved());
+		labelResult.setValue(listRR.get(index).getResult());
+		if(listRR.get(index).getResult().equals("Failed"))
 			item_result.setStyle("background-color: #ffeac2");
 		else
 			item_result.setStyle("background-color: #c3ffb1");
-		
-		for(int i=0; i<listCodStatus.size();++i){
-			if(listCodStatus.get(i).equals(listStatus.get(index))){
-				text_response_expected.setValue(listJsonResponse_exp.get(i));
-				labelNameResponse.setValue(listNameResponse.get(i));
+	
+		for(int i=0; i<listRe.size();++i){
+			if(listRe.get(i).getCod_status().equals(listRR.get(index).getStatus_response())){
+				text_response_expected.setValue(listRe.get(i).getJson_response_expected());
+				labelNameResponse.setValue(listRe.get(i).getName());
 			}
 		}
-		
+	
 	}
 	
-	@Listen("onClick = #button_exist")
-	public void exist() {
+
+	public void onClick$button_exist() {
 		window.detach();
 	}
 	
