@@ -2,11 +2,14 @@ package AppRestData;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -14,6 +17,63 @@ import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 
 public class RestClient {
+	
+	public ArrayList<String> generateUrlQueryString(ArrayList<String> listCaso,
+			ArrayList<String> listCampo, String url){
+		ArrayList<String> listUrlCase = new ArrayList<>();
+		int i=0;
+		
+		while(i<listCaso.size()){
+			String query = "";
+			for(int j=0; j<listCampo.size();++j){
+				try {
+					query += URLEncoder.encode(listCampo.get(j), "UTF-8");
+					query += "=";
+					if(listCaso.get(i).equals("  "))
+						query += "  ";
+					else
+						query += URLEncoder.encode(listCaso.get(i), "UTF-8");
+					if (j != listCampo.size() - 1)
+						query += "&";
+					++i;
+				} catch (UnsupportedEncodingException ex) {
+					throw new RuntimeException(
+							"Broken VM does not support UTF-8");
+				}
+			}
+			listUrlCase.add(url+query);
+		}
+		return listUrlCase;
+	}
+	
+
+	public ArrayList<String> generateUrlOtro(ArrayList<String> listCaso,
+			ArrayList<String> listCampo, String url){
+		ArrayList<String> listUrlCase = new ArrayList<>();
+		int i=0;
+		
+		while(i<listCaso.size()){
+			String query = "";
+			for(int j=0; j<listCampo.size();++j){
+				try {
+					query += URLEncoder.encode(listCampo.get(j), "UTF-8");
+					query += "/";
+					if(listCaso.get(i).equals("  "))
+						query += "  ";
+					else
+						query += URLEncoder.encode(listCaso.get(i), "UTF-8");
+					++i;
+				} catch (UnsupportedEncodingException ex) {
+					throw new RuntimeException(
+							"Broken VM does not support UTF-8");
+				}
+			}
+			listUrlCase.add(url+query);
+		}
+		return listUrlCase;
+	}
+	
+	
 
 	public JSONArray gerenateJson(ArrayList<String> listCaso,
 			ArrayList<String> listCampo) {
@@ -30,6 +90,7 @@ public class RestClient {
 		System.out.println(listJson);
 		return listJson;
 	}
+	
 
 	public void post(JSONArray listJson, ArrayList<Integer> listStatus,
 			ArrayList<String> listResponse, ArrayList<String> listRequestSend,
@@ -76,8 +137,7 @@ public class RestClient {
 					listResponseMessage.add(httpConnection.getResponseMessage());
 
 				} else {
-					BufferedReader br = new BufferedReader(
-							new InputStreamReader(httpConnection.getInputStream(), "utf-8"));
+					BufferedReader br = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(), "utf-8"));
 					String line = null;
 					while ((line = br.readLine()) != null) {
 						sb.append(line);
@@ -101,58 +161,71 @@ public class RestClient {
 
 	}
 
-	public void get(String urlService,ArrayList<String> listHeader, ArrayList<String> listValueHeader) {
-		final String targetURL = urlService;
-		try {
+	public void get(ArrayList<String> listUrlCase,
+			ArrayList<String> listHeader, ArrayList<String> listValueHeader ,ArrayList<Integer> listStatus,
+			ArrayList<String> listResponse, ArrayList<String> listRequestSend,
+			ArrayList<Integer> listTimeConnection,ArrayList<String> listResponseMessage ) {
 
-			URL restServiceURL = new URL(targetURL);
+		for (int i = 0; i < listUrlCase.size(); ++i) {
+			String targetURL = listUrlCase.get(i);
+			try {
 
-			HttpURLConnection httpConnection = (HttpURLConnection) restServiceURL.openConnection();
-			httpConnection.setRequestMethod("GET");
-			
-			for (int p = 0; p < listHeader.size(); ++p){
-				httpConnection.setRequestProperty(listHeader.get(p),listValueHeader.get(p));
-			}
-		
-			int httpResult = httpConnection.getResponseCode();
-			StringBuilder sb = new StringBuilder();
+				URL restServiceURL = new URL(targetURL);
 
-			if (httpConnection.getResponseCode() != 200) {
-				throw new RuntimeException(
-						"HTTP GET Request Failed with Error code : "
-								+ httpConnection.getResponseCode());
-			}else{
-				BufferedReader br = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(), "utf-8"));
-				String line = null;
-				while ((line = br.readLine()) != null) {
-					sb.append(line);
+				HttpURLConnection httpConnection = (HttpURLConnection) restServiceURL.openConnection();
+				httpConnection.setRequestMethod("GET");
+
+				for (int p = 0; p < listHeader.size(); ++p) 
+					httpConnection.setRequestProperty(listHeader.get(p),listValueHeader.get(p));
+								
+				int httpResult = httpConnection.getResponseCode();
+				StringBuilder sb = new StringBuilder();
+				long time = httpConnection.getDate();
+				Integer timeConnection = (int) (long) time;
+				listRequestSend.add(listUrlCase.get(i));
+				
+				if (httpConnection.getResponseCode() != 200) {
+					
+					throw new RuntimeException("HTTP GET Request Failed with Error code : " + httpConnection.getResponseCode());
+
+
+				/*	BufferedReader br = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(), "utf-8"));
+					String line = null;
+					while ((line = br.readLine()) != null) {
+						sb.append(line);
+					}
+					br.close();
+					System.out.println(httpResult + " "	+ httpConnection.getResponseMessage());
+					System.out.println(sb.toString()); */
+					
+				} else {
+					BufferedReader br = new BufferedReader(new InputStreamReader(httpConnection.getInputStream(), "utf-8"));
+					String line = null;
+					while ((line = br.readLine()) != null) {
+						sb.append(line);
+					}
+					br.close();
+					System.out.println(httpResult + " "+ httpConnection.getResponseMessage());
+					System.out.println(sb.toString());
+					listStatus.add(httpResult);
+					listResponse.add(sb.toString());
+					listTimeConnection.add(timeConnection);
+					listResponseMessage.add(httpConnection.getResponseMessage());
+
 				}
+				
+				httpConnection.disconnect();
+
+			} catch (MalformedURLException e) {
+
+				e.printStackTrace();
+
+			} catch (IOException e) {
+
+				e.printStackTrace();
+
 			}
-
-			BufferedReader responseBuffer = new BufferedReader(
-					new InputStreamReader((httpConnection.getInputStream())));
-
-			String output;
-
-			System.out.println(httpResult + " "
-					+ httpConnection.getResponseMessage());
-
-			while ((output = responseBuffer.readLine()) != null) {
-				System.out.println(output);
-			}
-
-			httpConnection.disconnect();
-
-		} catch (MalformedURLException e) {
-
-			e.printStackTrace();
-
-		} catch (IOException e) {
-
-			e.printStackTrace();
-
 		}
-
 	}
 
 }

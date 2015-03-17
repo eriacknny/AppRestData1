@@ -41,6 +41,7 @@ import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Radio;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabs;
@@ -72,6 +73,7 @@ public class AppRestDataController extends GenericForwardComposer {
 	private Button button_generate;
 	private Button button_cancel;
 	private Button button_result;
+	private Button button_delete;
 	private Textbox text_delimiter;
 	private Textbox text_path;
 	private Textbox text_row;
@@ -99,8 +101,9 @@ public class AppRestDataController extends GenericForwardComposer {
 	private Button add_item_response;
 	private Button detele_item_response;
 	private Intbox text_status;
-	private Groupbox groupboxParameters1;
-	private Groupbox groupboxParameters2;
+	private Listitem itemRadioButton;
+	private Radio rQueryString;
+	private Radio rOtro;
 	private EventQueue qe = EventQueues.lookup("connection", true);
 	private EventQueue qe1 = EventQueues.lookup("connection1", true);
 	private EventQueue qe2 = EventQueues.lookup("connection2", true);
@@ -120,6 +123,7 @@ public class AppRestDataController extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		comboTypeRequest.setValue("GET");
+
 		qe.subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				if(event.getName().equals("mensaje")){	
@@ -209,17 +213,10 @@ public class AppRestDataController extends GenericForwardComposer {
 	}
 	
 	public void onSelect$comboTypeRequest(){
-		
-		if (comboTypeRequest.getValue().equals("POST")
-				|| comboTypeRequest.getValue().equals("PUT")
-				|| comboTypeRequest.getValue().equals("DELETE")) {
-			groupboxParameters1.setVisible(true);
-			groupboxParameters2.setVisible(true);
-		}
-		else{
-			groupboxParameters1.setVisible(false);
-			groupboxParameters2.setVisible(false);
-		}
+		if(comboTypeRequest.getValue().equals("GET"))
+			itemRadioButton.setVisible(true);
+		else
+			itemRadioButton.setVisible(false);
 	}
 	
 	
@@ -446,11 +443,31 @@ public class AppRestDataController extends GenericForwardComposer {
 	       
 	}
 	
+	public void onClick$button_delete(){
+		Messagebox mensaje = new Messagebox();
+		mensaje.show("Are you sure?", "Question", Messagebox.OK
+				| Messagebox.CANCEL, Messagebox.QUESTION, new EventListener<Event>() {
+					@Override
+					public void onEvent(Event event) throws Exception {
+						// TODO Auto-generated method stub
+						if ("onCancel".equals(event.getName())) {
+
+						} else {
+							requestDao rDao = new requestDao();
+							rDao.eliminarService(request);
+							Messagebox mensaje2 = new Messagebox();
+							mensaje2.show("Successful operation!");
+						}
+					}
+			
+				});
+
+	}
+	
 
 	// Método para generar los casos de prueba
 	public void onClick$button_generate() {
-		
-		
+
 		Messagebox mensaje = new Messagebox();
 		mensaje.show("Are you sure?", "Question", Messagebox.OK
 				| Messagebox.CANCEL, Messagebox.QUESTION,
@@ -458,7 +475,7 @@ public class AppRestDataController extends GenericForwardComposer {
 					@Override
 					public void onEvent(Event event) throws Exception {
 						if ("onCancel".equals(event.getName())) {
-		
+
 						} else {
 							ArrayList<String> listString = new ArrayList<>();
 							ArrayList<String> listValuesValidate = new ArrayList<>();
@@ -471,14 +488,14 @@ public class AppRestDataController extends GenericForwardComposer {
 							ArrayList<String> listValueHeader = new ArrayList<>();
 							ArrayList<Integer> listStatus = new ArrayList<>();
 							ArrayList<String> listResponse = new ArrayList<>();
-							ArrayList<Integer> listCodStatus= new ArrayList<>();
+							ArrayList<Integer> listCodStatus = new ArrayList<>();
 							ArrayList<String> listRequestSend = new ArrayList<>();
 							ArrayList<Integer> listTimeConnection = new ArrayList<>();
 							ArrayList<String> listResponseMessage = new ArrayList<>();
 							ArrayList<String> listNameResponse = new ArrayList<>();
 							ArrayList<String> listJsonResponse = new ArrayList<>();
 							ArrayList<String> listResult = new ArrayList<>();
-					
+
 							List<Listitem> lista = setData.getItems();
 							List<Listitem> lista1 = set_headers.getItems();
 							List<Listitem> lista2 = set_response_expected.getItems();
@@ -486,124 +503,207 @@ public class AppRestDataController extends GenericForwardComposer {
 							String nameService = text_value.getValue();
 							String result = "";
 
-							ordenarParametros(listString, lista, listValuesValidate, listLengthMin,listLengthMax, listRequired, listCampo);
+							ordenarParametros(listString, lista,listValuesValidate, listLengthMin,listLengthMax, listRequired, listCampo);
 							obtenerHeaders(listHeader, listValueHeader, lista1);
-							obtenerResponses(listNameResponse, listJsonResponse,listCodStatus, lista2);
-							
-							//int lineas = Integer.parseInt(text_row.getValue());
-							//int lineas_min = (3 + listString.size());
-							//int row = setData.getItemCount();
+							obtenerResponses(listNameResponse,listJsonResponse, listCodStatus, lista2);
 
-							
-							 TestCase caso = new TestCase(); 
-							 ArrayList<String> listCaso = caso.tupla(listString, listValuesValidate, listLengthMin,listLengthMax); 
-							 System.out.println(listCaso); 
-							 RestClient rest = new RestClient(); 
-							 JSONArray listJson = rest.gerenateJson(listCaso,listCampo); 
-							 rest.post(listJson, listStatus, listResponse, listRequestSend, listTimeConnection, listHeader, listValueHeader,listResponseMessage,urlService,nameService);
-							 CompareResult compareResult = new CompareResult();
-							 listResult = compareResult.obtenerResult(listJsonResponse, listCodStatus, listResponse, listStatus);
-							 
-							 
-							 
-							 Date date= new Date(); 
-							 Timestamp time = new Timestamp(date.getTime());
-							 request = new request();
-							 request.setUrl(text_url.getValue());
-							 request.setJson_request(listJson);
-							 request.setName(text_nameService.getValue());
-							 request.setTime(time);
-							 request.setType(comboTypeRequest.getValue());
-							 request.setStatus('A');
-							 
-							
-							 requestDao requestDao = new requestDao();
-							 boolean service_name = requestDao.obtenerRequest(request);
-							 if(service_name == false){
-								 Boolean registro = null;
-								 registro = requestDao.registrarRequest(request);
-								 System.out.println("Registro:" + registro);
-								 
-								 for(int h=0; h<listHeader.size();++h){
-									 header header = new header();
-									 header.setName(listHeader.get(h));
-									 header.setValue(listValueHeader.get(h));
-									 header.setStatus('A');
-									 headerDao headerDao = new headerDao();
-									 Boolean registroH = headerDao.registrarHeader(header, request);
-									 System.out.println("Registro header:" + registroH);
-								 }
-								 for(int r =0; r<listNameResponse.size();++r){
-									 response_expected response_exp = new response_expected();
-									 response_exp.setName(listNameResponse.get(r));
-									 response_exp.setJson_response_expected(listJsonResponse.get(r));
-									 response_exp.setCod_status(Integer.toString(listCodStatus.get(r)));
-									 response_exp.setStatus('A');
-									 response_expectedDao response_expDao = new response_expectedDao();
-									 Boolean resgistroRE = response_expDao.registrarResponseExpected(request, response_exp);
-									 System.out.println("Resgistro response_expected:" + resgistroRE);
-								 }
-								 for(int re=0; re<listStatus.size();++re){
-									 response_receved response_rec = new response_receved();
-									 Timestamp time1 = new Timestamp(date.getTime());
-									 String valor = Integer.toString(listStatus.get(re)); 
-									 response_rec.setStatus_response(valor);
-									 response_rec.setMessage(listResponseMessage.get(re));
-									 response_rec.setJson_request(listRequestSend.get(re));
-									 response_rec.setJson_response_receved(listResponse.get(re));
-									 response_rec.setDuration(listTimeConnection.get(re));
-									 response_rec.setResult(listResult.get(re));
-									 response_rec.setStatus('A');
-									 response_rec.setTime(time1);
-									 response_recevedDao response_recDao = new response_recevedDao();
-									 Boolean registroRR = response_recDao.registrarResponseReceved(request, response_rec);
-									 System.out.println("Registro response_receved:" +registroRR);
-								 }
-								 
-								 for(int p=0; p<listString.size();++p){
-									 parameter parameter = new parameter();
-									 parameter.setField_name(listCampo.get(p));
-									 parameter.setType(listString.get(p));
-									 parameter.setValue(listValuesValidate.get(p));
-									 if(listLengthMin.get(p)==null && listLengthMax.get(p)==null){
-										 parameter.setLengthMin(0);
-										 parameter.setLengthMax(0);
-									 }
-									 if(listLengthMin.get(p)!=null && listLengthMax.get(p)!=null){
-										 parameter.setLengthMin(listLengthMin.get(p));
-										 parameter.setLengthMax(listLengthMax.get(p));
-									 }
-									 if(listLengthMin.get(p)==null && listLengthMax.get(p)!=null){
-											 parameter.setLengthMin(0);
-										 	 parameter.setLengthMax(listLengthMax.get(p));
-									 }
-									 if(listLengthMin.get(p)!=null && listLengthMax.get(p)==null){
-											 parameter.setLengthMin(listLengthMin.get(p));
-											 parameter.setLengthMax(0);
-									 }
-									 parameter.setRequired(listRequired.get(p));
-									 parameter.setStatus('A');
-									 parameterDao parameterDao = new parameterDao();
-									 boolean registroP = parameterDao.registrarParameter(request, parameter);
-									 System.out.println("Registro Parametro:" + registroP);
-									 
-									 
-								 }
-								 
-								 Messagebox mensaje2 = new Messagebox();
-								 mensaje2.show("Successful operation!");
-								 //limpiarListas();
-							 }else{
-								 Messagebox mensaje1 = new Messagebox();
-								 mensaje1.show("This name has been used, please specify!");
-							 }
-						
+							if (comboTypeRequest.getValue().equals("POST")) {
+								TestCase caso = new TestCase();
+								ArrayList<String> listCaso = caso.tupla(listString, listValuesValidate,listLengthMin, listLengthMax);
+								System.out.println(listCaso);
+								RestClient rest = new RestClient();
+								JSONArray listJson = rest.gerenateJson(listCaso, listCampo);
+								rest.post(listJson, listStatus, listResponse,listRequestSend, listTimeConnection,listHeader, listValueHeader,listResponseMessage, urlService,nameService);
+								CompareResult compareResult = new CompareResult();
+								listResult = compareResult.obtenerResult(listJsonResponse, listCodStatus,listResponse, listStatus);
+
+								Date date = new Date();
+								Timestamp time = new Timestamp(date.getTime());
+								request = new request();
+								request.setUrl(text_url.getValue());
+								request.setJson_request(listJson);
+								request.setName(text_nameService.getValue());
+								request.setTime(time);
+								request.setType(comboTypeRequest.getValue());
+								request.setListUrl(null);
+								request.setStatus('A');
+								requestDao requestDao = new requestDao();
+								boolean service_name = requestDao.obtenerRequest(request);
+								if (service_name == false) {
+									Boolean registro = null;
+									registro = requestDao
+											.registrarRequest(request);
+									for (int h = 0; h < listHeader.size(); ++h) {
+										header header = new header();
+										header.setName(listHeader.get(h));
+										header.setValue(listValueHeader.get(h));
+										header.setStatus('A');
+										headerDao headerDao = new headerDao();
+										Boolean registroH = headerDao.registrarHeader(header,request);
+									}
+									for (int r = 0; r < listNameResponse.size(); ++r) {
+										response_expected response_exp = new response_expected();
+										response_exp.setName(listNameResponse.get(r));
+										response_exp.setJson_response_expected(listJsonResponse.get(r));
+										response_exp.setCod_status(Integer.toString(listCodStatus.get(r)));
+										response_exp.setStatus('A');
+										response_expectedDao response_expDao = new response_expectedDao();
+										Boolean resgistroRE = response_expDao.registrarResponseExpected(request, response_exp);
+									}
+									for (int re = 0; re < listStatus.size(); ++re) {
+										response_receved response_rec = new response_receved();
+										Timestamp time1 = new Timestamp(date.getTime());
+										String valor = Integer.toString(listStatus.get(re));
+										response_rec.setStatus_response(valor);
+										response_rec.setMessage(listResponseMessage.get(re));
+										response_rec.setJson_request(listRequestSend.get(re));
+										response_rec.setJson_response_receved(listResponse.get(re));
+										response_rec.setDuration(listTimeConnection.get(re));
+										response_rec.setResult(listResult.get(re));
+										response_rec.setStatus('A');
+										response_rec.setTime(time1);
+										response_recevedDao response_recDao = new response_recevedDao();
+										Boolean registroRR = response_recDao.registrarResponseReceved(request, response_rec);
+									}
+
+									for (int p = 0; p < listString.size(); ++p) {
+										parameter parameter = new parameter();
+										parameter.setField_name(listCampo.get(p));
+										parameter.setType(listString.get(p));
+										parameter.setValue(listValuesValidate.get(p));
+										if (listLengthMin.get(p) == null && listLengthMax.get(p) == null) {
+											parameter.setLengthMin(0);
+											parameter.setLengthMax(0);
+										}
+										if (listLengthMin.get(p) != null && listLengthMax.get(p) != null) {
+											parameter.setLengthMin(listLengthMin.get(p));
+											parameter.setLengthMax(listLengthMax.get(p));
+										}
+										if (listLengthMin.get(p) == null && listLengthMax.get(p) != null) {
+											parameter.setLengthMin(0);
+											parameter.setLengthMax(listLengthMax.get(p));
+										}
+										if (listLengthMin.get(p) != null && listLengthMax.get(p) == null) {
+											parameter.setLengthMin(listLengthMin.get(p));
+											parameter.setLengthMax(0);
+										}
+										parameter.setRequired(listRequired.get(p));
+										parameter.setStatus('A');
+										parameterDao parameterDao = new parameterDao();
+										boolean registroP = parameterDao.registrarParameter(request,parameter);
+
+									}
+
+									Messagebox mensaje2 = new Messagebox();
+									mensaje2.show("Successful operation!");
+								
+								} else {
+									Messagebox mensaje1 = new Messagebox();
+									mensaje1.show("This name has been used, please specify!");
+								}
+							} else {
+								if (comboTypeRequest.getValue().equals("GET")){
+									TestCase caso = new TestCase();
+									RestClient rest = new RestClient();
+									ArrayList<String> listUrlCase = new ArrayList<>();
+									ArrayList<String> listCaso = caso.tupla(listString, listValuesValidate,listLengthMin, listLengthMax);
+									if(rQueryString.isSelected())
+										listUrlCase = rest.generateUrlQueryString(listCaso, listCampo, text_url.getValue());
+									if(rOtro.isSelected())
+										listUrlCase = rest.generateUrlOtro(listCaso, listCampo, text_url.getValue());
+									rest.get(listUrlCase, listHeader, listValueHeader, listStatus, listResponse, listRequestSend, listTimeConnection, listResponseMessage);
+									CompareResult compareResult = new CompareResult();
+									listResult = compareResult.obtenerResult(listJsonResponse, listCodStatus,listResponse, listStatus);
+									Date date = new Date();
+									Timestamp time = new Timestamp(date.getTime());
+									request = new request();
+									request.setUrl(text_url.getValue());
+									request.setJson_request(null);
+									request.setName(text_nameService.getValue());
+									request.setTime(time);
+									request.setType(comboTypeRequest.getValue());
+									request.setListUrl(listUrlCase);
+									request.setStatus('A');
+									requestDao requestDao = new requestDao();
+									boolean service_name = requestDao.obtenerRequest(request);
+									
+									if (service_name == false) {
+										Boolean registro = null;
+										registro = requestDao
+												.registrarRequest(request);
+										for (int h = 0; h < listHeader.size(); ++h) {
+											header header = new header();
+											header.setName(listHeader.get(h));
+											header.setValue(listValueHeader.get(h));
+											header.setStatus('A');
+											headerDao headerDao = new headerDao();
+											Boolean registroH = headerDao.registrarHeader(header,request);
+										}
+										for (int r = 0; r < listNameResponse.size(); ++r) {
+											response_expected response_exp = new response_expected();
+											response_exp.setName(listNameResponse.get(r));
+											response_exp.setJson_response_expected(listJsonResponse.get(r));
+											response_exp.setCod_status(Integer.toString(listCodStatus.get(r)));
+											response_exp.setStatus('A');
+											response_expectedDao response_expDao = new response_expectedDao();
+											Boolean resgistroRE = response_expDao.registrarResponseExpected(request, response_exp);
+										}
+										for (int re = 0; re < listStatus.size(); ++re) {
+											response_receved response_rec = new response_receved();
+											Timestamp time1 = new Timestamp(date.getTime());
+											String valor = Integer.toString(listStatus.get(re));
+											response_rec.setStatus_response(valor);
+											response_rec.setMessage(listResponseMessage.get(re));
+											response_rec.setJson_request(listRequestSend.get(re));
+											response_rec.setJson_response_receved(listResponse.get(re));
+											response_rec.setDuration(listTimeConnection.get(re));
+											response_rec.setResult(listResult.get(re));
+											response_rec.setStatus('A');
+											response_rec.setTime(time1);
+											response_recevedDao response_recDao = new response_recevedDao();
+											Boolean registroRR = response_recDao.registrarResponseReceved(request, response_rec);
+										}
+
+										for (int p = 0; p < listString.size(); ++p) {
+											parameter parameter = new parameter();
+											parameter.setField_name(listCampo.get(p));
+											parameter.setType(listString.get(p));
+											parameter.setValue(listValuesValidate.get(p));
+											if (listLengthMin.get(p) == null && listLengthMax.get(p) == null) {
+												parameter.setLengthMin(0);
+												parameter.setLengthMax(0);
+											}
+											if (listLengthMin.get(p) != null && listLengthMax.get(p) != null) {
+												parameter.setLengthMin(listLengthMin.get(p));
+												parameter.setLengthMax(listLengthMax.get(p));
+											}
+											if (listLengthMin.get(p) == null && listLengthMax.get(p) != null) {
+												parameter.setLengthMin(0);
+												parameter.setLengthMax(listLengthMax.get(p));
+											}
+											if (listLengthMin.get(p) != null && listLengthMax.get(p) == null) {
+												parameter.setLengthMin(listLengthMin.get(p));
+												parameter.setLengthMax(0);
+											}
+											parameter.setRequired(listRequired.get(p));
+											parameter.setStatus('A');
+											parameterDao parameterDao = new parameterDao();
+											boolean registroP = parameterDao.registrarParameter(request,parameter);
+
+										}
+
+										Messagebox mensaje2 = new Messagebox();
+										mensaje2.show("Successful operation!");
+								   }else {
+										Messagebox mensaje1 = new Messagebox();
+										mensaje1.show("This name has been used, please specify!");
+									}
+							   }
+							};
+
 						}
 					}
 				});
-		
-		 //GenerateTXT(row, lineas, listCaso);
-
 	}
 	
 

@@ -2,18 +2,24 @@
 <zk>
 	<window border="normal" height="100%" zclass="z-window-popup"
 		apply="AppRestData.AppRestDataController" >
+		<radiogroup id="rg1"></radiogroup>
 		<groupbox mold="3d">
 			<caption label="Service"
 				style="background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)">
 			</caption>
 			<listbox>
-				<listitem>
+				<listitem selected="false">
 					<listcell>
 						<label value="URL:"></label>
-						<textbox id="text_url" width="550px"></textbox>
+						<textbox id="text_url" width="340px"></textbox>
+					
+					</listcell>
+					<listcell>
 						<label value="Name:"></label>
 						<textbox id="text_nameService" width="330px">
 						</textbox>
+					</listcell>
+					<listcell>
 						<combobox id="comboTypeRequest" readonly="true">
 							<comboitem label="GET"></comboitem>
 							<comboitem label="POST"></comboitem>
@@ -21,6 +27,15 @@
 							<comboitem label="DELETE"></comboitem>
 						</combobox>
 					</listcell>
+				</listitem>
+				<listitem id="itemRadioButton" style="background:#ffffff" selected="false">
+					<listcell>
+							<radio id="rQueryString" label="Query String" radiogroup="rg1"></radio>			
+					</listcell>
+					<listcell>
+						<radio id="rOtro" label="Otro" radiogroup="rg1"></radio>
+					</listcell>
+					<listcell></listcell>
 				</listitem>
 			</listbox>
 		</groupbox>
@@ -63,7 +78,7 @@
 		</groupbox>
 		<separator></separator>
 		<separator></separator>
-		<groupbox id="groupboxParameters1" mold="3d" visible="false">
+		<groupbox mold="3d">
 			<caption label="Parameters" style=" background: linear-gradient(to bottom, #f0f9ff 0%,#a1dbff 100%)"></caption>
 			<listbox id="setData" rows="4">
 				<listhead>
@@ -76,7 +91,7 @@
 				</listhead>
 			</listbox>
 		</groupbox>
-		<groupbox id="groupboxParameters2" mold="3d" visible="false">
+		<groupbox mold="3d">
 			<listbox>
 				<listitem>
 					<listcell>
@@ -216,9 +231,10 @@
 			</listbox>
 		</groupbox>
 		<groupbox>
-			<button id="button_generate" label="Run"></button>
-			<button id="button_cancel" label="Cancel"></button>
-			<button id="button_result" label="Show Results"></button>
+			<button id="button_generate" label="Run" width="150px" ></button>
+			<button id="button_cancel" label="Cancel" width="150px"></button>
+			<button id="button_delete" label="Delete" width="150px"></button>
+			<button id="button_result" label="Show Results" width="150px"></button>
 		</groupbox>
 
 	</window>

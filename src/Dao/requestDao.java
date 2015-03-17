@@ -8,10 +8,10 @@ public class requestDao {
 
 	public boolean registrarRequest(request request) {
 		try {
-			String sql = "insert into request(url,json,name,time,status,type) values('"
+			String sql = "insert into request(url,json,name,time,status,type,listurl) values('"
 					+ request.getUrl() + "','" + request.getJson_request()
 					+ "','" + request.getName() + "','" + request.getTime()
-					+ "','" + request.getStatus() + "','"+request.getType()+"')";
+					+ "','" + request.getStatus() + "','"+request.getType()+"','"+request.getListUrl()+"')";
 			Cdao ocado = new Cdao();
 			if (ocado.ejecuta_sql(sql)) {
 				return true;
@@ -44,5 +44,20 @@ public class requestDao {
 			
 	}
 	
+	public boolean eliminarService(request request){
+		try {
+			String sql = "delete from response_receved where id_request = '"+request.getId_request()+"' ;delete from response_expected where id_request = '"+request.getId_request()+"';delete from parameter where id_request = '"+request.getId_request()+"';delete from header where id_request = '"+request.getId_request()+"';delete from request where id= '"+request.getId_request()+"'";
+			Cdao ocado = new Cdao();
+			if (ocado.ejecuta_sql(sql)) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception ex) {
+			System.out.println("" + ex.getStackTrace());
+			return false;
+		}
+		
+	}
 	
 }

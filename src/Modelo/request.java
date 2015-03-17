@@ -12,6 +12,7 @@ public class request {
 	String name;
 	Date time;
 	String type;
+	ArrayList<String> listUrl;
 	char status;
 	
 	
@@ -57,6 +58,13 @@ public class request {
 	public void setType(String type) {
 		this.type = type;
 	}
+	public ArrayList<String> getListUrl() {
+		return listUrl;
+	}
+	public void setListUrl(ArrayList<String> listUrl) {
+		this.listUrl = listUrl;
+	}
+
 		
 	
 }
